@@ -1,26 +1,196 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-base: #0C0C0D;
+  --bg-subtle: #141416;
+  --bg-surface: #1C1C1F;
+  --bg-raised: #252528;
+  --bg-overlay: #2E2E32;
+
+  /* Borders */
+  --border-default: #2A2A2F;
+  --border-em: #3A3A40;
+
+  /* Text */
+  --text-0: #FFFFFF;
+  --text-1: #E4E4E6;
+  --text-2: #A0A0A5;
+  --text-3: #5C5C62;
+
+  /* Accent — Olive */
+  --olive: #8A9530;
+  --olive-dim: #6B7525;
+  --olive-bg: rgba(138, 149, 48, 0.45);
+  --olive-text: #B8C847;
+
+  /* Accent — Gold */
+  --gold: #C9A84C;
+  --gold-bg: rgba(201, 168, 76, 0.5);
+  --gold-text: #E8C97A;
+
+  /* Semantic */
+  --red-semantic: #E24B4A;
+  --red-bg: rgba(226, 75, 74, 0.13);
+  --red-text: #F07C7B;
+
+  --green-semantic: #4AAD6E;
+  --green-bg: rgba(74, 173, 110, 0.13);
+  --green-text: #70CC90;
+
+  --amber: #D4903A;
+  --amber-bg: rgba(212, 144, 58, 0.13);
+
+  /* Border radius */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-base: var(--bg-base);
+  --color-subtle: var(--bg-subtle);
+  --color-surface: var(--bg-surface);
+  --color-raised: var(--bg-raised);
+  --color-overlay: var(--bg-overlay);
+
+  --color-border: var(--border-default);
+  --color-border-em: var(--border-em);
+
+  --color-t0: var(--text-0);
+  --color-t1: var(--text-1);
+  --color-t2: var(--text-2);
+  --color-t3: var(--text-3);
+
+  --color-olive: var(--olive);
+  --color-olive-dim: var(--olive-dim);
+  --color-olive-bg: var(--olive-bg);
+  --color-olive-text: var(--olive-text);
+
+  --color-gold: var(--gold);
+  --color-gold-bg: var(--gold-bg);
+  --color-gold-text: var(--gold-text);
+
+  --color-red-semantic: var(--red-semantic);
+  --color-red-bg: var(--red-bg);
+  --color-red-text: var(--red-text);
+
+  --color-green-semantic: var(--green-semantic);
+  --color-green-bg: var(--green-bg);
+  --color-green-text: var(--green-text);
+
+  --color-amber: var(--amber);
+  --color-amber-bg: var(--amber-bg);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --radius-pill: var(--r-pill);
+
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes gold-shine {
+  0%, 100% { 
+    border-color: rgba(201, 168, 76, 0.4);
+    box-shadow: 0 0 5px rgba(201, 168, 76, 0.2), inset 0 0 1px rgba(201, 168, 76, 0.1);
+  }
+  50% { 
+    border-color: rgba(240, 185, 40, 0.95);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.55), inset 0 0 4px rgba(255, 215, 0, 0.35);
+  }
+}
+
+.animate-gold-shine {
+  animation: gold-shine 3.5s infinite ease-in-out;
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0c0c0d;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+  
+  /* Mesh Gradient Background */
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(138, 149, 48, 0.08) 0px, transparent 40%),
+    radial-gradient(at 90% 10%, rgba(201, 168, 76, 0.05) 0px, transparent 35%),
+    radial-gradient(at 50% 100%, rgba(138, 149, 48, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 50%, rgba(201, 168, 76, 0.03) 0px, transparent 40%);
+  background-attachment: fixed;
+}
+
+/* Premium Fine Grain Texture Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.55; /* Even higher opacity for intense grain */
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  background-size: 14rem; /* Makes the grain particles much finer/smaller */
+  filter: contrast(400%) brightness(250%) saturate(0%) invert(100%);
+  mix-blend-mode: overlay;
+}
+
+@keyframes mesh-move {
+  0% { transform: scale(1) translate(0px, 0px); }
+  50% { transform: scale(1.1) translate(10px, -10px); }
+  100% { transform: scale(1) translate(0px, 0px); }
+}
+
+/* Optional animated accent blob */
+body::after {
+  content: "";
+  position: fixed;
+  top: -50px; left: -50px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(138, 149, 48, 0.1) 0%, transparent 70%);
+  filter: blur(40px);
+  z-index: -1;
+  animation: mesh-move 12s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+/* 
+ * MOBILE STABILITY FIXES
+ * Forces these elements onto their own GPU layer (compositing layer).
+ * Prevents flickering or disappearing when the mobile browser's UI (URL bar) moves.
+ */
+[data-testid="main-header"],
+[data-testid="bottom-nav"] {
+  transform: translateZ(0); 
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* This hides the Next.js static indicator/dev-overlay in some versions */
+nextjs-portal, 
+[data-nextjs-toast], 
+#next-logo, 
+.nextjs-static-indicator-container {
+  display: none !important;
 }
