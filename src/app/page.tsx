@@ -27,12 +27,12 @@ export default function Home() {
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [activeBenefitIndex, setActiveBenefitIndex] = useState(0);
   const benefitsList = [
-    "avail 50% off on Exigo",
-    "unlimited lounge with priority pass",
-    "5x reward points on luxury travel",
-    "zero forex markup on global bookings",
-    "complimentary taj epicure membership",
-    "24/7 personalized global concierge"
+    { text: "avail 50% off on Exigo Coworking", logo: "EXG" },
+    { text: "unlimited lounge with priority pass", logo: "PP" },
+    { text: "5x reward points on luxury travel", logo: "RWDS" },
+    { text: "zero forex markup on global bookings", logo: "FX" },
+    { text: "complimentary taj epicure membership", logo: "TAJ" },
+    { text: "24/7 personalized global concierge", logo: "GLB" }
   ];
 
   useEffect(() => {
@@ -309,16 +309,25 @@ export default function Home() {
 
             <div className="relative z-10 w-full flex items-center justify-center overflow-hidden">
               <AnimatePresence mode="wait">
-                <motion.p
+                <motion.div
                   key={activeBenefitIndex}
-                  initial={{ opacity: 0, y: 5 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="text-[11px] font-black tracking-[0.2em] uppercase text-[#4a3a1a] text-center whitespace-nowrap px-4"
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  className="flex items-center gap-3 px-4"
                 >
-                  {benefitsList[activeBenefitIndex]}
-                </motion.p>
+                  {/* Logo / Icon Placeholder */}
+                  <div className="bg-black text-[9px] font-black w-10 h-5 flex items-center justify-center rounded-[4px] tracking-tighter border border-black/10">
+                    {benefitsList[activeBenefitIndex].logo}
+                  </div>
+                  
+                  <div className="flex flex-col items-start leading-[1.1]">
+                    <span className="text-[11px] font-black tracking-[0.08em] uppercase text-[#4a3a1a]">
+                      {benefitsList[activeBenefitIndex].text}
+                    </span>
+                  </div>
+                </motion.div>
               </AnimatePresence>
             </div>
           </section>
