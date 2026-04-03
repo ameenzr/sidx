@@ -78,7 +78,7 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
                   <h2 className="text-[16px] font-bold text-[#fdfaf5] tracking-tight leading-none mb-0.5">fazil E</h2>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#4ade80]" />
-                    <span className="text-[10px] font-mono text-emerald-400/80 tracking-wider">ELITE MEMBER</span>
+                    <span className="text-[10px] font-mono text-emerald-400/80 tracking-wider">COMMUNITY MEMBER</span>
                   </div>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
                     <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-3">Membership</p>
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[#1a1408] to-[#0a0805] border border-[var(--gold)]/20 relative overflow-hidden">
                       <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(ellipse 80% 60% at 80% 20%, rgba(180,130,40,0.4), transparent)" }} />
-                      <p className="text-[10px] font-mono text-[var(--gold-text)]/50 uppercase tracking-[0.25em] mb-3">PROJX ELITE</p>
+                      <p className="text-[10px] font-mono text-[var(--gold-text)]/50 uppercase tracking-[0.25em] mb-3">PROJX CLUB</p>
                       <p className="text-[20px] font-bold text-[#fdfaf5] tracking-[0.1em] font-mono mb-4">•••• •••• 4821</p>
                       <div className="flex justify-between items-end">
                         <div>

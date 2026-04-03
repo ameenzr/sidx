@@ -3,7 +3,7 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Item } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/Badge";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface DetailDrawerProps {
   item: Item | null;
@@ -13,6 +13,13 @@ interface DetailDrawerProps {
 
 export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
   const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  useEffect(() => {
+    setActiveGalleryIdx(0);
+    setDirection(0);
+  }, [item?.id]);
+
   const y = useMotionValue(0);
   const opacity = useTransform(y, [0, 300], [1, 0]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -31,6 +38,13 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
     if (scrollRef.current) {
       setCanDrag(scrollRef.current.scrollTop === 0);
     }
+  };
+
+  const paginate = (newDirection: number) => {
+    if (!item?.gallery) return;
+    const nextIdx = (activeGalleryIdx + newDirection + item.gallery.length) % item.gallery.length;
+    setDirection(newDirection);
+    setActiveGalleryIdx(nextIdx);
   };
 
   return (
@@ -86,26 +100,68 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
             >
               {/* Hero / Gallery */}
               {type === "project" && item.gallery && item.gallery.length > 0 ? (
-                <div className="relative h-[240px] overflow-hidden shrink-0">
-                  <AnimatePresence mode="wait">
+                <div className="relative h-[280px] overflow-hidden shrink-0 bg-black/20">
+                  <AnimatePresence initial={false} custom={direction}>
                     <motion.img
                       key={activeGalleryIdx}
                       src={item.gallery[activeGalleryIdx]}
-                      alt=""
-                      initial={{ opacity: 0, scale: 1.04 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      custom={direction}
+                      variants={{
+                        enter: (direction: number) => ({
+                          x: direction > 0 ? "100%" : "-100%",
+                          opacity: 0,
+                          scale: 1.1
+                        }),
+                        center: {
+                          zIndex: 1,
+                          x: 0,
+                          opacity: 1,
+                          scale: 1,
+                          transition: {
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
+                          }
+                        },
+                        exit: (direction: number) => ({
+                          zIndex: 0,
+                          x: direction < 0 ? "100%" : "-100%",
+                          opacity: 0,
+                          scale: 0.9,
+                          transition: {
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
+                          }
+                        })
+                      }}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={1}
+                      onDragEnd={(e, { offset, velocity }) => {
+                        const swipe = Math.abs(offset.x) > 50 || Math.abs(velocity.x) > 500;
+                        if (swipe) {
+                          paginate(offset.x > 0 ? -1 : 1);
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full object-cover cursor-grab active:cursor-grabbing"
                     />
                   </AnimatePresence>
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b07] via-[#0e0b07]/20 to-transparent" />
-                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+                  {/* Glassy Overlay for edge fade */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0e0b07] via-transparent to-transparent z-10" />
+                  <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#0e0b07]/40 to-transparent z-10" />
+                  
+                  {/* Gallery Controls */}
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
                     {item.gallery.map((_, i) => (
                       <button
                         key={i}
-                        onClick={() => setActiveGalleryIdx(i)}
-                        className={`h-1 rounded-full transition-all duration-300 ${i === activeGalleryIdx ? "w-6 bg-[var(--gold)]" : "w-1.5 bg-white/30"}`}
+                        onClick={() => {
+                          setDirection(i > activeGalleryIdx ? 1 : -1);
+                          setActiveGalleryIdx(i);
+                        }}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${i === activeGalleryIdx ? "w-8 bg-[var(--gold)] shadow-[0_0_10px_rgba(251,191,36,0.5)]" : "w-2 bg-white/20 hover:bg-white/40"}`}
                       />
                     ))}
                   </div>
@@ -186,6 +242,22 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                         <p className="text-[16px] font-bold text-[var(--gold-text)]">{stat.value}</p>
                       </div>
                     ))}
+                  </motion.div>
+                )}
+
+                {/* Location — projects */}
+                {type === "project" && item.location && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.28 }}
+                    className="flex items-center gap-2 mb-5 font-mono text-[12px] text-[var(--gold-text)]/70"
+                  >
+                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                    <span>{item.location}</span>
                   </motion.div>
                 )}
 
