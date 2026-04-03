@@ -22,7 +22,7 @@ export default function Home() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedHomeItem, setSelectedHomeItem] = useState<Item | null>(null);
   const [homeItemType, setHomeItemType] = useState<"event" | "project">("event");
-  const [activeFeaturedIndex, setActiveFeaturedIndex] = useState(0);
+  const [activeFeaturedIndex, setActiveFeaturedIndex] = useState(2);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [activeBenefitIndex, setActiveBenefitIndex] = useState(0);
@@ -170,7 +170,7 @@ export default function Home() {
             <div className="px-6 mb-3">
               <h2
                 data-testid="hot-events-header"
-                className="text-[22px] font-bold tracking-tight text-[#fdfaf5]"
+                className="text-[22px] font-bold tracking-tight text-[#fdfaf5] [text-shadow:_0_2px_12px_rgb(0_0_0_/_60%)] drop-shadow-[0_4px_20px_rgba(0,0,0,1)]"
               >
                 Upcoming events
               </h2>
@@ -178,8 +178,12 @@ export default function Home() {
             <div className="mx-auto w-full max-w-[500px] px-6 mt-0">
               <CardStack
                 items={featuredStackItems}
-                initialIndex={0}
+                initialIndex={2}
                 onChangeIndex={(index) => setActiveFeaturedIndex(index)}
+            onCardClick={(index) => {
+              setSelectedHomeItem(featuredItems[index]);
+              setHomeItemType("event");
+            }}
                 autoAdvance
                 intervalMs={4000}
                 pauseOnHover
@@ -194,7 +198,6 @@ export default function Home() {
                 renderCard={(item, { active }) => {
                   const itemIndex = featuredItems.findIndex(fi => fi.id === item.id);
                   const originalItem = featuredItems[itemIndex];
-                  const isExclusive = originalItem?.badges.some(b => b.toLowerCase() === 'exclusive');
 
                   // Color mapping based on posterGradients
                   const themes = [
@@ -205,16 +208,10 @@ export default function Home() {
                   ];
                   const theme = themes[itemIndex % themes.length];
 
-                  const borderColor = active
-                    ? `border-[${theme.color},0.8)] shadow-[0_0_35px_${theme.shadow}]`
-                    : `border-[${theme.color},0.25)]`;
-
-                  const grayscaleClass = !isExclusive && !active ? 'grayscale-[30%]' : '';
-
                   return (
                     <div
-                      className={`relative h-full w-full rounded-2xl overflow-hidden border-2 ${grayscaleClass} ${!active ? 'opacity-40 scale-90' : 'opacity-100'}`}
-                      style={{
+                      className={`relative h-full w-full rounded-2xl overflow-hidden border-2 transition-all duration-300 ${!active ? 'opacity-40 scale-90 grayscale-[30%]' : 'opacity-100 cursor-pointer active:scale-[0.98]'}`}
+                      style={{ 
                         borderColor: active ? `${theme.color},0.35)` : `${theme.color},0.1)`,
                         boxShadow: active ? `0 0 20px ${theme.shadow.replace('0.3', '0.15')}` : 'none'
                       }}
@@ -344,12 +341,12 @@ export default function Home() {
                   {project.gallery?.map((img, iIdx) => (
                     <div
                       key={iIdx}
-                      className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1500 ease-in-out ${iIdx === activeGalleryIndex ? 'opacity-30' : 'opacity-0'}`}
+                      className={`absolute inset-0 bg-cover bg-center transition-all duration-1500 ease-in-out ${iIdx === activeGalleryIndex ? 'opacity-55 scale-100 blur-none' : 'opacity-0 scale-105 blur-sm'}`}
                       style={{ backgroundImage: `url("${img}")` }}
                     />
                   ))}
-                  {/* Radial gradient to focus attention */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-base)]/80 via-transparent to-[var(--bg-base)]" />
+                  {/* Radial gradient to focus attention — slightly lightened top for visibility */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-base)]/65 via-transparent to-[var(--bg-base)]" />
                 </div>
               ))}
             </div>
@@ -368,7 +365,7 @@ export default function Home() {
                 <div className="flex flex-col gap-1">
                   <h2
                     data-testid="explore-projects-header"
-                    className="text-[22px] font-bold tracking-tight text-[#fdfaf5]"
+                    className="text-[22px] font-bold tracking-tight text-[#fdfaf5] [text-shadow:_0_2px_12px_rgb(0_0_0_/_60%)] drop-shadow-[0_4px_20px_rgba(0,0,0,1)]"
                   >
                     Explore latest projects
                   </h2>

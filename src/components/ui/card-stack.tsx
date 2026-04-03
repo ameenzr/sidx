@@ -63,6 +63,7 @@ export type CardStackProps<T extends CardStackItem> = {
 
   /** Hooks */
   onChangeIndex?: (index: number, item: T) => void;
+  onCardClick?: (index: number, item: T) => void;
 
   /** Custom renderer (optional) */
   renderCard?: (item: T, state: { active: boolean }) => React.ReactNode;
@@ -114,6 +115,7 @@ export function CardStack<T extends CardStackItem>({
   className,
 
   onChangeIndex,
+  onCardClick,
   renderCard,
 }: CardStackProps<T>) {
   const reduceMotion = useReducedMotion();
@@ -317,7 +319,13 @@ export function CardStack<T extends CardStackItem>({
                   }}
                   // translateZ via style transform (kept stable w/ motion values above)
                   // We apply translateZ by using a CSS transform in a child wrapper.
-                  onClick={() => setActive(i)}
+                  onClick={() => {
+                    if (isActive) {
+                      onCardClick?.(i, item);
+                    } else {
+                      setActive(i);
+                    }
+                  }}
                   {...dragProps}
                 >
                   <div
