@@ -16,7 +16,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Exclusive Membership App",
+  title: "SID-X exclusive community",
   description: "Curated investment projects and exclusive events.",
 };
 
