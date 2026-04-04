@@ -27,7 +27,7 @@ const PARTICLES = [
   { angle: 255, dist: 85,  size: 1.1, delay: 0.22, duration: 0.87 },
 ];
 
-const RING_CHARS = "PROJX · EXCLUSIVE COMMUNITY · SHARED GROWTH · ".split("");
+const RING_CHARS = "SID-X · EXCLUSIVE COMMUNITY · SHARED GROWTH · ".split("");
 
 export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
   const [phase, setPhase] = useState<"in" | "burst" | "reveal" | "out">("in");
@@ -223,8 +223,8 @@ export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
             className="relative z-10 flex flex-col items-center"
           >
             <motion.img
-              src="/projx_logo.png"
-              alt="PROJX"
+              src="/sid-x_logo.png"
+              alt="SID-X"
               animate={
                 phase === "burst" || phase === "reveal"
                   ? {

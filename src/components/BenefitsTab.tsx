@@ -16,8 +16,8 @@ const benefits: BenefitItem[] = [
   {
     title: "Exigo Access",
     description: "Avail 50% off on premium coworking spaces and executive suites globally.",
-    detail: "Get 50% off across 200+ premium coworking spaces and executive suites in 40+ cities globally. Access rooftop lounges, private meeting rooms, and executive concierge services — all as a PROJX member.",
-    howToRedeem: ["Open the Exigo app", "Log in with your PROJX member ID", "Select any workspace and apply member code at checkout"],
+    detail: "Get 50% off across 200+ premium coworking spaces and executive suites in 40+ cities globally. Access rooftop lounges, private meeting rooms, and executive concierge services — all as a SID-X member.",
+    howToRedeem: ["Open the Exigo app", "Log in with your SID-X member ID", "Select any workspace and apply member code at checkout"],
     icon: "M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21",
     accent: "from-amber-500/20 to-yellow-600/5"
   },
@@ -32,8 +32,8 @@ const benefits: BenefitItem[] = [
   {
     title: "5x Travel Rewards",
     description: "Earn 5x reward points on all luxury travel and high-end hotel bookings.",
-    detail: "Every rupee you spend on luxury hotels, business class flights, bespoke tours, and yacht charters earns 5x PROJX reward points. Points can be redeemed against future investments or exclusive experiences.",
-    howToRedeem: ["Book travel through our partner portal", "Your PROJX account is automatically credited within 7 working days", "Redeem points from the Rewards section in the app"],
+    detail: "Every rupee you spend on luxury hotels, business class flights, bespoke tours, and yacht charters earns 5x SID-X reward points. Points can be redeemed against future investments or exclusive experiences.",
+    howToRedeem: ["Book travel through our partner portal", "Your SID-X account is automatically credited within 7 working days", "Redeem points from the Rewards section in the app"],
     icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z",
     accent: "from-emerald-500/20 to-green-600/5"
   },
@@ -41,7 +41,7 @@ const benefits: BenefitItem[] = [
     title: "Zero Forex Markup",
     description: "Experience 0% markup on all global transactions without any hidden fees.",
     detail: "Transact internationally at the exact interbank exchange rate with zero hidden charges. Shop, dine, and invest globally without the typical 2–4% forex surcharge levied by conventional banks.",
-    howToRedeem: ["Use your PROJX-linked card for any international transaction", "Zero markup is automatically applied", "Monthly statement shows exact savings in the app"],
+    howToRedeem: ["Use your SID-X-linked card for any international transaction", "Zero markup is automatically applied", "Monthly statement shows exact savings in the app"],
     icon: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     accent: "from-fuchsia-500/20 to-purple-600/5"
   },
@@ -49,7 +49,7 @@ const benefits: BenefitItem[] = [
     title: "Taj Epicure Premium",
     description: "Complimentary premium-tier Taj Epicure membership with 25% off F&B and spa.",
     detail: "Enjoy a premium-tier Taj Epicure membership that grants 25% discounts across all Taj properties' restaurants, spas, and banquets. Plus, receive complimentary welcome amenities on every stay across 100+ Taj hotels.",
-    howToRedeem: ["Visit any Taj property restaurant or spa", "Present your PROJX member QR code from the app", "Discount is applied automatically at billing"],
+    howToRedeem: ["Visit any Taj property restaurant or spa", "Present your SID-X member QR code from the app", "Discount is applied automatically at billing"],
     icon: "M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z",
     accent: "from-orange-500/20 to-red-600/5"
   },

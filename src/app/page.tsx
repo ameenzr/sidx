@@ -135,8 +135,8 @@ export default function Home() {
             className="h-8 flex items-center transition-all duration-300"
           >
             <img 
-              src="/projx_logo.png" 
-              alt="PROJX" 
+              src="/sid-x_logo.png" 
+              alt="SID-X" 
               className="h-full w-auto object-contain" 
             />
           </div>

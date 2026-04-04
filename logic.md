@@ -1,6 +1,6 @@
 
 
-# projX App Logic (app-logic.md)
+# sid-X App Logic (app-logic.md)
 
 ## 1\. Architecture & Data Flow
 
