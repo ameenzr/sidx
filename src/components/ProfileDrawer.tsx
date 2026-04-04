@@ -72,10 +72,10 @@ export function ProfileDrawer({ isOpen, onClose }: ProfileDrawerProps) {
               {/* Avatar + Name */}
               <div className="absolute bottom-4 left-5 flex items-end gap-3">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 flex items-center justify-center text-black font-bold text-[18px] shadow-[0_0_20px_rgba(251,191,36,0.4)] border-2 border-[var(--gold)]">
-                  FE
+                  FA
                 </div>
                 <div>
-                  <h2 className="text-[16px] font-bold text-[#fdfaf5] tracking-tight leading-none mb-0.5">fazil E</h2>
+                  <h2 className="text-[16px] font-bold text-[#fdfaf5] tracking-tight leading-none mb-0.5">Fazil A</h2>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#4ade80]" />
                     <span className="text-[10px] font-mono text-emerald-400/80 tracking-wider">COMMUNITY MEMBER</span>

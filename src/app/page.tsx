@@ -147,7 +147,7 @@ export default function Home() {
             onClick={() => setIsProfileOpen(true)}
             className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] transition-all duration-300 active:scale-90 hover:shadow-[0_0_20px_rgba(251,191,36,0.35)]"
           >
-            FZ
+            FA
           </button>
         </header>
 
