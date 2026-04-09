@@ -13,12 +13,13 @@ function fmt(n: number) {
   return `₹${(n / 1000).toFixed(0)}K`;
 }
 
-const FILTERS = ["All", "Real Estate", "Startups", "Consumer"];
+const FILTERS = ["All", "Tourism", "Residential", "Healthcare", "Commercial"];
 
 const filterMap: Record<string, string[]> = {
-  "Real Estate": ["real estate", "hotel", "apartment", "residences"],
-  "Startups": ["startup", "tech", "consumer tech", "skincare"],
-  "Consumer": ["consumer", "consumer tech", "brand"],
+  "Tourism": ["agri-tourism", "eco", "tourism", "flagship"],
+  "Residential": ["residential", "premium", "villa"],
+  "Healthcare": ["healthcare"],
+  "Commercial": ["commercial", "convention", "retail"],
 };
 
 export function ProjectsTab() {
@@ -70,7 +71,7 @@ export function ProjectsTab() {
           <AnimatePresence mode="popLayout">
             {filtered.map((item, idx) => {
               const fundedPct = item.raised && item.target ? Math.round((item.raised / item.target) * 100) : 0;
-              const isHot = item.badges.some(b => b.toLowerCase() === "hot");
+              const isHot = item.badges.some(b => b.toLowerCase().includes("hot"));
               const isClosing = fundedPct >= 70;
 
               return (

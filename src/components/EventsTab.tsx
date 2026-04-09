@@ -7,12 +7,12 @@ import { useState } from "react";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { type Item } from "@/lib/mock-data";
 
-const FILTERS = ["All", "Networking", "Investment", "Education"];
+const FILTERS = ["All", "Networking", "Investment", "Exclusive"];
 
 const filterMap: Record<string, string[]> = {
   "Networking": ["networking", "summit", "conclave", "meet"],
-  "Investment": ["investment", "investor", "partner"],
-  "Education": ["education", "edu", "women", "startup"],
+  "Investment": ["investment", "investor", "partner", "healthcare"],
+  "Exclusive": ["exclusive", "members", "site visit"],
 };
 
 function parseDateParts(dateStr?: string): { day: string; month: string; time: string } {
@@ -45,7 +45,7 @@ export function EventsTab() {
         {/* Header */}
         <div className="px-6 mb-5">
           <h1 className="text-[28px] font-bold text-[#fdfaf5] tracking-tight mb-1">Events</h1>
-          <p className="text-[12px] font-mono text-white/35">{featuredItems.length} exclusive events · members only</p>
+          <p className="text-[12px] font-mono text-white/35">{featuredItems.length} curated events · NRK members only</p>
         </div>
 
         {/* Filter pills */}
@@ -70,7 +70,7 @@ export function EventsTab() {
           <AnimatePresence mode="popLayout">
             {filtered.map((item, idx) => {
               const { day, month, time } = parseDateParts(item.date);
-              const isClosingSoon = item.title.toLowerCase().includes("dubai") || item.badges.some(b => b.toLowerCase().includes("closing"));
+              const isClosingSoon = item.badges.some(b => b.toLowerCase().includes("closing"));
               const isExclusive = item.badges.some(b => b.toLowerCase().includes("exclusive"));
 
               return (

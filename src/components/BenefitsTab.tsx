@@ -8,7 +8,7 @@ interface BenefitItem {
   id: string;
   title: string;
   partner: string;
-  category: "travel" | "dining" | "lifestyle" | "finance";
+  category: "investment" | "lifestyle" | "travel" | "finance";
   description: string;
   detail: string;
   howToRedeem: string[];
@@ -20,110 +20,110 @@ interface BenefitItem {
 
 const benefits: BenefitItem[] = [
   {
-    id: "priority_pass",
-    title: "Unlimited Lounge Access",
-    partner: "Priority Pass",
-    category: "travel",
-    description: "1,300+ airport lounges in 148 countries, complimentary and unlimited.",
-    detail: "Your Priority Pass provides unlimited, complimentary access to over 1,300 exclusive airport lounges in 148 countries. Experience premium dining, spa, and concierge services before every flight.",
+    id: "priority_deals",
+    title: "First-Look Deal Access",
+    partner: "SID-X Investment Club",
+    category: "investment",
+    description: "Priority access to new SID-X projects 2–4 weeks before public launch.",
+    detail: "As a Gold member, you receive early notification and a reserved slot on every new SID-X project — typically 2–4 weeks before the deal opens to general investors. Your slot is held for 72 hours from the notification date, with no obligation to commit.",
     howToRedeem: [
-      "Locate your Priority Pass card in the app under 'My Privileges'",
-      "Show digital card at any participating lounge entrance",
-      "Access is complimentary with no daily limit",
+      "Enable 'Deal Alerts' in your notification settings",
+      "Receive early access link via WhatsApp and in-app notification",
+      "Express interest within the 72-hour priority window to secure your slot",
     ],
-    icon: "M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5",
-    accentColor: "#1a4f8c",
-    logoText: "PP",
-    isActive: true,
-  },
-  {
-    id: "taj_epicure",
-    title: "25% Off + Welcome Amenities",
-    partner: "Taj Epicure",
-    category: "dining",
-    description: "Premium Taj Epicure membership across 100+ Taj properties worldwide.",
-    detail: "Enjoy a premium-tier Taj Epicure membership that grants 25% discounts across all Taj properties' restaurants, spas, and banquets. Plus, receive complimentary welcome amenities on every stay.",
-    howToRedeem: [
-      "Visit any Taj property restaurant or spa",
-      "Present your SID-X member QR code from the app",
-      "Discount is applied automatically at billing",
-    ],
-    icon: "M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z",
+    icon: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z",
     accentColor: "#7a5010",
-    logoText: "TAJ",
+    logoText: "FLD",
     isActive: true,
   },
   {
-    id: "exigo",
-    title: "50% Off Premium Workspace",
-    partner: "Exigo Cowork",
+    id: "eala_stays_perk",
+    title: "20% Off Farm Stays & Dining",
+    partner: "Eala Stays",
     category: "lifestyle",
-    description: "200+ coworking spaces and executive suites across 40+ cities.",
-    detail: "Get 50% off across 200+ premium coworking spaces and executive suites in 40+ cities globally. Access rooftop lounges, private meeting rooms, and executive concierge services.",
+    description: "Member discount on overnight stays, farm experiences, and dining at Eala Stays, Wayanad.",
+    detail: "Enjoy a 20% discount on all overnight bookings, farm-stay packages, and F&B at Eala Stays resort in Wayanad. Includes a complimentary guided plantation tour and organic welcome basket for Gold members and above.",
     howToRedeem: [
-      "Open the Exigo app",
-      "Log in with your SID-X member ID",
-      "Select any workspace and apply member code at checkout",
+      "Contact Eala Stays directly and mention your SID-X Gold membership",
+      "Show your SID-X member QR code from this app at check-in",
+      "Discount is applied to accommodation and dining bills at checkout",
     ],
-    icon: "M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21",
+    icon: "M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25",
     accentColor: "#1a3d28",
-    logoText: "EXG",
-    isActive: false,
+    logoText: "ELA",
+    isActive: true,
   },
   {
-    id: "zero_forex",
-    title: "0% Forex Markup",
-    partner: "Zero Forex",
-    category: "finance",
-    description: "Exact interbank exchange rate on all international transactions.",
-    detail: "Transact internationally at the exact interbank exchange rate with zero hidden charges. Shop, dine, and invest globally without the typical 2–4% forex surcharge levied by conventional banks.",
+    id: "babel_passes",
+    title: "Complimentary Event Passes",
+    partner: "Babel Aspen Glow",
+    category: "lifestyle",
+    description: "2 complimentary passes per quarter to events at Babel Aspen Glow Convention Centre, Kannur.",
+    detail: "Receive 2 complimentary entry passes every quarter to any event hosted at Babel Aspen Glow, Kannur — covering exhibitions, business conferences, cultural shows, and curated experiences. Unused passes carry over for one quarter only.",
     howToRedeem: [
-      "Use your SID-X-linked card for any international transaction",
-      "Zero markup is automatically applied",
-      "Monthly statement shows exact savings in the app",
+      "Browse upcoming events at Babel Aspen Glow in the Events tab",
+      "Tap 'Redeem Member Pass' on any eligible event listing",
+      "E-ticket is generated in the app — present at venue entrance",
     ],
-    icon: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-    accentColor: "#2d1a52",
-    logoText: "FX",
+    icon: "M16.5 6v.75a3.75 3.75 0 01-7.5 0V6a3.75 3.75 0 017.5 0zM11.25 0a5.25 5.25 0 00-5.25 5.25v.75a5.25 5.25 0 0010.5 0V5.25A5.25 5.25 0 0011.25 0z",
+    accentColor: "#1a2e4f",
+    logoText: "BAG",
     isActive: false,
   },
   {
-    id: "travel_rewards",
-    title: "5× Reward Points",
-    partner: "Luxury Travel",
+    id: "travel_concessions",
+    title: "NRK Holiday & Travel Packages",
+    partner: "SID-X Travel",
     category: "travel",
-    description: "Earn 5x SID-X points on all luxury travel and hotel bookings.",
-    detail: "Every rupee you spend on luxury hotels, business class flights, bespoke tours, and yacht charters earns 5x SID-X reward points. Points can be redeemed against future investments or exclusive experiences.",
+    description: "Curated Kerala and international holiday packages with NRK-specific concessions and deals.",
+    detail: "Access member-exclusive travel packages — Kerala heritage tours, Gulf and international holiday deals, and air travel concessions negotiated for NRKs. Packages include visa advisory, accommodation, guide services, and complimentary airport transfers through SID-X's travel partners.",
     howToRedeem: [
-      "Book travel through our partner portal",
-      "Your SID-X account is credited within 7 working days",
-      "Redeem points from the Rewards section in the app",
+      "Contact your SID-X relationship manager to browse current packages",
+      "Travel section with self-booking will be available in a future app update",
+      "Member discounts are applied automatically at partner checkout",
     ],
     icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z",
-    accentColor: "#3d1a1a",
-    logoText: "5×",
+    accentColor: "#2d1a3d",
+    logoText: "TRV",
+    isActive: false,
+  },
+  {
+    id: "legal_review",
+    title: "Free Property Legal Review",
+    partner: "SID-X Legal",
+    category: "finance",
+    description: "Complimentary legal consultation for investment documents, sale agreements, and property due diligence.",
+    detail: "Gold members receive complimentary legal review for investment and property-related paperwork — including sale agreements, partnership deeds, and investment term sheets. Up to 3 consultations per year with SID-X's empanelled legal team. Available in English and Malayalam.",
+    howToRedeem: [
+      "Upload your document via the secure portal in this Benefits section",
+      "SID-X Legal team will contact you within 2 business days",
+      "Consultations are conducted via video call or in-person at SID-X offices",
+    ],
+    icon: "M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25",
+    accentColor: "#1a2e3d",
+    logoText: "LEG",
     isActive: true,
   },
   {
-    id: "concierge",
-    title: "24/7 Personal Concierge",
-    partner: "Global Concierge",
-    category: "lifestyle",
-    description: "Dedicated relationship manager available round the clock.",
-    detail: "A dedicated lifestyle concierge available 24/7 for restaurant reservations, private event access, luxury transportation, ticket procurement, gift sourcing, and any bespoke needs.",
+    id: "norka_assist",
+    title: "NORKA Scheme Navigator",
+    partner: "NORKA Connect",
+    category: "finance",
+    description: "Expert assistance with NORKA government scheme eligibility, registration, and filing for NRKs.",
+    detail: "Navigate Kerala's NORKA schemes with a dedicated assistance service. Our team helps you assess eligibility and file for welfare fund benefits, re-employment programs, repatriation assistance, and NRK entrepreneur support grants — saving you time and preventing common filing errors.",
     howToRedeem: [
-      "Tap 'My Concierge' in the app to start a live chat",
-      "Call our exclusive concierge hotline listed in your profile",
-      "Submit requests via WhatsApp to your dedicated RM",
+      "Tap 'Start NORKA Assessment' below to begin",
+      "Complete the 5-minute eligibility questionnaire",
+      "A NORKA advisor will contact you within 3 business days to guide the process",
     ],
-    icon: "M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.48-4.18-7.076-7.076l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z",
-    accentColor: "#1a2e3d",
-    logoText: "RM",
+    icon: "M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z",
+    accentColor: "#1c2a1a",
+    logoText: "NRK",
     isActive: false,
   },
 ];
 
-const CATEGORY_FILTERS = ["All", "Travel", "Dining", "Lifestyle", "Finance"] as const;
+const CATEGORY_FILTERS = ["All", "Investment", "Lifestyle", "Travel", "Finance"] as const;
 
 function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onClose: () => void }) {
   return (
@@ -159,6 +159,12 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
                 <div>
                   <p className="text-[11px] font-mono text-white/35 uppercase tracking-wider mb-0.5">{benefit.partner}</p>
                   <h2 className="text-[20px] font-bold text-[#fdfaf5] tracking-tight leading-tight">{benefit.title}</h2>
+                  {benefit.isActive && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span className="text-[10px] font-mono text-emerald-400">Active on your account</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -177,7 +183,7 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
               </div>
 
               <button className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-95 transition-transform">
-                Activate Benefit
+                {benefit.isActive ? "View Details" : "Activate Benefit"}
               </button>
             </div>
           </motion.div>
@@ -204,7 +210,7 @@ export function BenefitsTab() {
         {/* Header */}
         <div className="px-6 mb-5">
           <h1 className="text-[28px] font-bold text-[#fdfaf5] tracking-tight mb-1">Member Privileges</h1>
-          <p className="text-[12px] font-mono text-white/35">Exclusive perks curated for club members</p>
+          <p className="text-[12px] font-mono text-white/35">Exclusive perks for SID-X club members</p>
         </div>
 
         {/* Tier card */}
