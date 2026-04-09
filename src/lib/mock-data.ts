@@ -146,3 +146,132 @@ export const hotProjects: Item[] = [
 
 export const exploreProjects: Item[] = hotProjects;
 
+// ─── Rewards & Perks ──────────────────────────────────────────────────────────
+
+export const userRewards = {
+  points: 8420,
+  tier: "GOLD" as const,
+  nextTier: "PLATINUM" as const,
+  pointsToNextTier: 1580,
+};
+
+export interface HomePerk {
+  id: string;
+  partner: string;
+  category: string;
+  headline: string;
+  sub: string;
+  accentColor: string;
+  logoText: string;
+  isNew?: boolean;
+}
+
+export const homePerks: HomePerk[] = [
+  {
+    id: "perk_priority_pass",
+    partner: "Priority Pass",
+    category: "Travel",
+    headline: "Unlimited Lounge Access",
+    sub: "1,300+ airports worldwide",
+    accentColor: "#1a4f8c",
+    logoText: "PP",
+  },
+  {
+    id: "perk_taj",
+    partner: "Taj Epicure",
+    category: "Dining",
+    headline: "25% off + welcome amenities",
+    sub: "100+ Taj properties",
+    accentColor: "#7a5010",
+    logoText: "TAJ",
+  },
+  {
+    id: "perk_exigo",
+    partner: "Exigo Cowork",
+    category: "Lifestyle",
+    headline: "50% off workspace",
+    sub: "200+ locations, 40 cities",
+    accentColor: "#1a3d28",
+    logoText: "EXG",
+  },
+  {
+    id: "perk_forex",
+    partner: "Zero Forex",
+    category: "Finance",
+    headline: "0% markup globally",
+    sub: "Exact interbank rate always",
+    accentColor: "#2d1a52",
+    logoText: "FX",
+    isNew: true,
+  },
+  {
+    id: "perk_concierge",
+    partner: "Global Concierge",
+    category: "Lifestyle",
+    headline: "Personal RM, always on",
+    sub: "24/7 dedicated relationship mgr",
+    accentColor: "#1a2e3d",
+    logoText: "RM",
+  },
+  {
+    id: "perk_travel_rewards",
+    partner: "Luxury Travel",
+    category: "Travel",
+    headline: "5× reward points",
+    sub: "On all luxury bookings",
+    accentColor: "#3d1a1a",
+    logoText: "5×",
+  },
+];
+
+// ─── Portfolio ────────────────────────────────────────────────────────────────
+
+export interface PortfolioInvestment {
+  projectId: string;
+  shortTitle: string;
+  invested: number;
+  currentValue: number;
+  irr: number;
+  status: "Active" | "Exited" | "Pending";
+  color: string;
+}
+
+export const userPortfolio = {
+  totalInvested: 4000000,
+  currentValue: 4810000,
+  returns: 810000,
+  returnPercent: 20.3,
+  activeCount: 3,
+  avgIRR: 22.7,
+};
+
+export const portfolioInvestments: PortfolioInvestment[] = [
+  {
+    projectId: "p_luxury_hotel",
+    shortTitle: "Riverside Hotel",
+    invested: 2500000,
+    currentValue: 2962500,
+    irr: 18.5,
+    status: "Active",
+    color: "#3B82F6",
+  },
+  {
+    projectId: "p_olympus_apartment",
+    shortTitle: "Olympus Sky",
+    invested: 1000000,
+    currentValue: 1212000,
+    irr: 21.2,
+    status: "Active",
+    color: "#10B981",
+  },
+  {
+    projectId: "p_skin_care",
+    shortTitle: "Aura Glow",
+    invested: 500000,
+    currentValue: 642500,
+    irr: 28.5,
+    status: "Active",
+    color: "#F59E0B",
+  },
+];
+

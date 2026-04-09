@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import { SearchBar } from "@/components/ui/SearchBar";
-import { Card } from "@/components/ui/Card";
-import { featuredItems, exploreProjects, type Item } from "@/lib/mock-data";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { CardStack, type CardStackItem } from "@/components/ui/card-stack";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  exploreProjects,
+  hotProjects,
+  featuredItems,
+  portfolioInvestments,
+  userPortfolio,
+  userRewards,
+  homePerks,
+  type Item,
+} from "@/lib/mock-data";
+import { motion } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { EventsTab } from "@/components/EventsTab";
 import { ProjectsTab } from "@/components/ProjectsTab";
@@ -15,504 +21,397 @@ import { ProfileDrawer } from "@/components/ProfileDrawer";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { LaunchAnimation } from "@/components/LaunchAnimation";
 
+function fmt(n: number) {
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
+  return `₹${(n / 1000).toFixed(0)}K`;
+}
+
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
   const [hasLaunched, setHasLaunched] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [selectedHomeItem, setSelectedHomeItem] = useState<Item | null>(null);
-  const [homeItemType, setHomeItemType] = useState<"event" | "project">("event");
-  const [activeFeaturedIndex, setActiveFeaturedIndex] = useState(2);
-  const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
-  const [activeBenefitIndex, setActiveBenefitIndex] = useState(0);
-  const benefitsList = [
-    { text: "avail 50% off on Exigo Coworking", logo: "EXG" },
-    { text: "unlimited lounge with priority pass", logo: "PP" },
-    { text: "5x reward points on luxury travel", logo: "RWDS" },
-    { text: "zero forex markup on global bookings", logo: "FX" },
-    { text: "complimentary taj epicure membership", logo: "TAJ" },
-    { text: "24/7 personalized global concierge", logo: "GLB" }
-  ];
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [drawerType, setDrawerType] = useState<"event" | "project">("project");
+  const [activeOppsIndex, setActiveOppsIndex] = useState(0);
+
+  const open = (item: Item, type: "event" | "project") => {
+    setSelectedItem(item);
+    setDrawerType(type);
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveBenefitIndex((prev) => (prev + 1) % benefitsList.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const [isExploreVisible, setIsExploreVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const exploreSectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsExploreVisible(entry.isIntersecting);
-      },
-      { threshold: 0.8 }
-    );
-
-    if (exploreSectionRef.current) {
-      observer.observe(exploreSectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    // Reset gallery index when switching projects
-    setActiveGalleryIndex(0);
-  }, [activeProjectIndex]);
-
-  useEffect(() => {
-    if (!isExploreVisible) return;
-
-    const project = exploreProjects[activeProjectIndex];
-    if (!project || !project.gallery || project.gallery.length <= 1) return;
-
-    const timer = setInterval(() => {
-      setActiveGalleryIndex((prev) => (prev + 1) % (project.gallery?.length || 1));
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [activeProjectIndex, isExploreVisible]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => {}; // kept for future use
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const posterGradients = [
-    // Scale Up Conclave — dark steel #1B1F24 tones
-    "radial-gradient(ellipse 160% 60% at 50% 0%, rgba(40,50,70,0.38) 0%, rgba(27,31,36,0.18) 50%, transparent 80%)",
-    // Dubai Expo — deep teal & indigo luxury tones
-    "radial-gradient(ellipse 160% 60% at 50% 0%, rgba(30,120,160,0.38) 0%, rgba(10,30,80,0.18) 50%, transparent 80%)",
-    // Madhyamam Edu Cafe — warm terracotta & clay
-    "radial-gradient(ellipse 160% 60% at 50% 0%, rgba(180,90,50,0.38) 0%, rgba(100,50,20,0.18) 50%, transparent 80%)",
-    // KSUM Women Startup Summit — fuchsia & plum
-    "radial-gradient(ellipse 160% 60% at 50% 0%, rgba(190,50,130,0.38) 0%, rgba(90,30,70,0.18) 50%, transparent 80%)",
-  ];
-
-  const featuredStackItems = useMemo(() => featuredItems.map((item) => ({
-    id: item.id,
-    title: item.title,
-    description: item.description,
-    imageSrc: item.image,
-    href: "#",
-  })), []);
 
   return (
     <>
       <LaunchAnimation onComplete={() => setHasLaunched(true)} />
       <div
-        data-testid="home-page-container"
         className="flex flex-col min-h-full pt-[82px] overflow-x-hidden"
-        style={{
-          opacity: hasLaunched ? 1 : 0,
-          transition: "opacity 0.5s ease-in-out",
-          pointerEvents: hasLaunched ? "auto" : "none",
-        }}
+        style={{ opacity: hasLaunched ? 1 : 0, transition: "opacity 0.5s ease-in-out", pointerEvents: hasLaunched ? "auto" : "none" }}
       >
-        {/* 1. Header — Using fixed for better mobile support */}
-        <header
-          data-testid="main-header"
-          className={`fixed top-0 left-0 right-0 z-[150] flex justify-between items-center px-6 pt-8 pb-4 bg-gradient-to-b from-[#0a0805] via-[#0a0805]/95 to-transparent transition-all duration-300`}
-        >
-          {/* Logo Container */}
-          <div
-            data-testid="logo-container"
-            className="h-8 flex items-center transition-all duration-300"
-          >
-            <img 
-              src="/sid-x_logo.png" 
-              alt="SID-X" 
-              className="h-full w-auto object-contain" 
-            />
+        {/* ── Header ── */}
+        <header className="fixed top-0 left-0 right-0 z-[150] flex justify-between items-center px-5 pt-8 pb-4 bg-gradient-to-b from-[#0a0805] via-[#0a0805]/95 to-transparent">
+          <div className="h-7 flex items-center">
+            <img src="/sid-x_logo.png" alt="SID-X" className="h-full w-auto object-contain" />
           </div>
-
-          {/* User Avatar — opens profile drawer */}
-          <button
-            data-testid="user-avatar"
-            onClick={() => setIsProfileOpen(true)}
-            className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] transition-all duration-300 active:scale-90 hover:shadow-[0_0_20px_rgba(251,191,36,0.35)]"
-          >
-            FA
-          </button>
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5 bg-[var(--gold)]/10 border border-[var(--gold)]/25 rounded-full px-3 py-1.5">
+              <svg className="w-3 h-3 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
+              </svg>
+              <span className="text-[11px] font-mono font-bold text-[var(--gold-text)]">{userRewards.points.toLocaleString()}</span>
+            </div>
+            <button
+              onClick={() => setIsProfileOpen(true)}
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] active:scale-90 transition-transform"
+            >
+              FA
+            </button>
+          </div>
         </header>
 
-        {/* --- HOME TAB CONTENT --- */}
+        {/* ════════ HOME ════════ */}
         {activeTab === "Home" && (
-          <div className="flex flex-col w-full transition-opacity duration-300">
-            {/* Fix 2: Opacity cross-fade between gradient layers.
-              CSS cannot interpolate between gradient() values, but opacity is always animatable. */}
-            {posterGradients.map((gradient, i) => (
-              <div
-                key={i}
-                aria-hidden="true"
-                className="fixed inset-0 pointer-events-none z-0"
-                style={{
-                  background: gradient,
-                  opacity: activeFeaturedIndex === i ? 1 : 0,
-                  transition: "opacity 0.5s ease-in-out",
-                }}
-              />
-            ))}
+          <div className="flex flex-col w-full pb-32">
 
-            {/* 4. Upcoming Events Section */}
-            <section data-testid="featured-section" className="relative mt-12 mb-2">
-              <div className="px-6 mb-3">
-                <h2
-                  data-testid="hot-events-header"
-                  className="text-[22px] font-bold tracking-tight text-[#fdfaf5] [text-shadow:_0_2px_12px_rgb(0_0_0_/_60%)] drop-shadow-[0_4px_20px_rgba(0,0,0,1)]"
-                >
-                  Upcoming events
-                </h2>
+            {/* ── 1. Portfolio Hero ── */}
+            <section className="px-5 mt-5 mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="relative rounded-[28px] overflow-hidden border border-[var(--gold)]/20 p-6"
+                style={{ background: "linear-gradient(140deg,#1c1508 0%,#0f0c06 60%,#0a0805 100%)" }}
+              >
+                <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 110% 80% at 10% 20%,rgba(180,130,40,0.14),transparent 60%)" }} />
+                {/* Sparkline */}
+                <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none opacity-20">
+                  <svg viewBox="0 0 300 60" preserveAspectRatio="none" className="w-full h-full">
+                    <defs>
+                      <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#4ade80" stopOpacity="0.35" />
+                        <stop offset="100%" stopColor="#4ade80" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,52 C20,48 35,55 60,44 C80,36 95,50 120,36 C140,26 155,40 180,24 C200,14 215,22 240,12 C258,6 272,10 300,4"
+                      fill="none" stroke="#4ade80" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M0,52 C20,48 35,55 60,44 C80,36 95,50 120,36 C140,26 155,40 180,24 C200,14 215,22 240,12 C258,6 272,10 300,4 L300,60 L0,60 Z"
+                      fill="url(#sparkFill)" />
+                  </svg>
+                </div>
+                <div className="relative z-10">
+                  <p className="text-[10px] font-mono text-[var(--gold-text)]/40 uppercase tracking-[0.28em] mb-3">Portfolio Value</p>
+                  <div className="flex items-end gap-3 mb-1">
+                    <h1 className="text-[40px] font-bold text-[#fdfaf5] tracking-tight leading-none">{fmt(userPortfolio.currentValue)}</h1>
+                    <div className="flex items-center gap-1 mb-2 bg-emerald-400/10 px-2.5 py-1 rounded-full border border-emerald-400/20">
+                      <svg className="w-2.5 h-2.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                      </svg>
+                      <span className="text-[11px] font-bold text-emerald-400">+{userPortfolio.returnPercent}%</span>
+                    </div>
+                  </div>
+                  <p className="text-[12px] text-white/30 mb-5">+{fmt(userPortfolio.returns)} unrealised gain</p>
+                  <div className="h-px bg-[var(--gold)]/10 mb-4" />
+                  <div className="grid grid-cols-3">
+                    <div>
+                      <p className="text-[15px] font-bold text-white/85">{fmt(userPortfolio.totalInvested)}</p>
+                      <p className="text-[9px] font-mono text-white/28 uppercase tracking-wider mt-0.5">Deployed</p>
+                    </div>
+                    <div className="border-x border-[var(--gold)]/10 px-4">
+                      <p className="text-[15px] font-bold text-white/85">{userPortfolio.activeCount}</p>
+                      <p className="text-[9px] font-mono text-white/28 uppercase tracking-wider mt-0.5">Active</p>
+                    </div>
+                    <div className="pl-4">
+                      <p className="text-[15px] font-bold text-white/85">{userPortfolio.avgIRR}%</p>
+                      <p className="text-[9px] font-mono text-white/28 uppercase tracking-wider mt-0.5">Avg IRR</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </section>
+
+            {/* ── 2. My Investments ── */}
+            <section className="mb-6">
+              <div className="px-5 mb-3.5 flex justify-between items-baseline">
+                <h2 className="text-[17px] font-bold text-[#fdfaf5] tracking-tight">My Investments</h2>
+                <button onClick={() => setActiveTab("Projects")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">manage →</button>
               </div>
-              <div className="mx-auto w-full max-w-[500px] px-6 mt-0">
-                <CardStack
-                  items={featuredStackItems}
-                  initialIndex={2}
-                  onChangeIndex={(index) => setActiveFeaturedIndex(index)}
-                  onCardClick={(index) => {
-                    setSelectedHomeItem(featuredItems[index]);
-                    setHomeItemType("event");
-                  }}
-                  autoAdvance
-                  intervalMs={4000}
-                  pauseOnHover
-                  showDots={false}
-                  cardWidth={isMobile ? 280 : 340}
-                  cardHeight={isMobile ? 158 : 191}
-                  maxVisible={3}
-                  spreadDeg={0}
-                  overlap={isMobile ? 0.65 : 0.28}
-                  activeScale={1.12}
-                  inactiveScale={0.8}
-                  renderCard={(item, { active }) => {
-                    const itemIndex = featuredItems.findIndex(fi => fi.id === item.id);
-                    const originalItem = featuredItems[itemIndex];
-
-                    // Color mapping based on posterGradients
-                    const themes = [
-                      { color: "rgba(40,50,70", shadow: "rgba(40,50,70,0.3)" }, // Dark Steel (#1B1F24)
-                      { color: "rgba(30,120,160", shadow: "rgba(30,120,160,0.3)" }, // Deep Teal (Dubai)
-                      { color: "rgba(180,90,50", shadow: "rgba(180,90,50,0.3)" }, // Terracotta (Edu Cafe)
-                      { color: "rgba(190,50,130", shadow: "rgba(190,50,130,0.3)" }, // Fuchsia (Summit)
-                    ];
-                    const theme = themes[itemIndex % themes.length];
-
-                    return (
-                      <div
-                        className={`relative h-full w-full rounded-2xl overflow-hidden border-2 transition-all duration-300 ${!active ? 'opacity-40 scale-90 grayscale-[30%]' : 'opacity-100 cursor-pointer active:scale-[0.98]'}`}
-                        style={{
-                          borderColor: active ? `${theme.color},0.35)` : `${theme.color},0.1)`,
-                          boxShadow: active ? `0 0 20px ${theme.shadow.replace('0.3', '0.15')}` : 'none'
-                        }}
-                      >
-                        {item.imageSrc && (
-                          <img src={item.imageSrc} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
-                        )}
+              <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
+                {portfolioInvestments.map((inv, i) => {
+                  const project = hotProjects.find(p => p.id === inv.projectId);
+                  const progress = project?.raised && project?.target ? Math.round((project.raised / project.target) * 100) : 0;
+                  const gain = inv.currentValue - inv.invested;
+                  return (
+                    <motion.button
+                      key={inv.projectId}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.09, duration: 0.38 }}
+                      onClick={() => project && open(project, "project")}
+                      className="shrink-0 w-[158px] h-[168px] rounded-[22px] overflow-hidden border border-white/8 bg-[#0f0c06] relative active:scale-[0.95] transition-transform"
+                    >
+                      {project?.image && <div className="absolute inset-0 bg-cover bg-center opacity-[0.22]" style={{ backgroundImage: `url("${project.image}")` }} />}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0805] via-[#0a0805]/80 to-transparent" />
+                      <div className="relative z-10 p-4 flex flex-col h-full">
+                        <div className="flex justify-between items-start">
+                          <div className="rounded-full px-2 py-0.5 border" style={{ backgroundColor: `${inv.color}18`, borderColor: `${inv.color}38` }}>
+                            <span className="text-[10px] font-bold" style={{ color: inv.color }}>{inv.irr}% IRR</span>
+                          </div>
+                          <div className="w-1.5 h-1.5 rounded-full mt-1.5" style={{ backgroundColor: inv.color, boxShadow: `0 0 6px ${inv.color}` }} />
+                        </div>
+                        <div className="mt-auto text-left">
+                          <p className="text-[11px] font-bold text-white leading-tight mb-0.5">{inv.shortTitle}</p>
+                          <p className="text-[10px] font-mono text-white/35 mb-1">{fmt(inv.invested)} invested</p>
+                          <p className="text-[11px] font-bold mb-2.5" style={{ color: inv.color }}>+{fmt(gain)}</p>
+                          <div className="w-full h-[3px] rounded-full bg-white/10 overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${progress}%`, backgroundColor: inv.color }} />
+                          </div>
+                          <p className="text-[8px] font-mono text-white/20 mt-1">{progress}% funded</p>
+                        </div>
                       </div>
-                    );
-                  }}
-                />
-
-                {/* 4.1 Independent Event Details — clickable to open detail drawer */}
-                <div className="flex items-start justify-center">
-                  <motion.button
-                    key={activeFeaturedIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.1 }}
-                    onClick={() => {
-                      setSelectedHomeItem(featuredItems[activeFeaturedIndex]);
-                      setHomeItemType("event");
-                    }}
-                    className="mt-8 flex flex-col items-center text-center group w-full active:scale-[0.98] transition-transform"
-                  >
-                    <div className="flex gap-2 mb-2 items-center flex-wrap justify-center">
-                      {featuredItems[activeFeaturedIndex]?.badges.map((b, i) => (
-                        <Badge key={i} label={b} />
-                      ))}
-
-                      {/* Registration Closing Soon Animated Disclaimer */}
-                      {featuredItems[activeFeaturedIndex]?.title.toLowerCase().includes("dubai expo") && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="bg-[#B91C1C] text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-lg border border-white/20"
-                        >
-                          <motion.span
-                            animate={{ opacity: [1, 0.4, 1], scale: [1, 1.2, 1] }}
-                            transition={{ repeat: Infinity, duration: 1.5 }}
-                            className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_#fff]"
-                          />
-                          closing soon
-                        </motion.div>
-                      )}
-                    </div>
-                    <h3 className="text-[17px] font-bold text-white mb-1.5 uppercase tracking-wide">
-                      {featuredItems[activeFeaturedIndex]?.title}
-                    </h3>
-                    <p className="text-[12px] text-white/50 px-8 leading-relaxed line-clamp-1 mb-6">
-                      {featuredItems[activeFeaturedIndex]?.description}
-                    </p>
-
-                    <div className="flex flex-col gap-1 text-[10px] font-medium text-[var(--gold-text)]">
-                      {featuredItems[activeFeaturedIndex]?.date && (
-                        <span className="flex items-center justify-center gap-1.5 opacity-80">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
-                          {featuredItems[activeFeaturedIndex].date}
-                        </span>
-                      )}
-                      {featuredItems[activeFeaturedIndex]?.venue && (
-                        <span className="flex items-center justify-center gap-1.5 opacity-80">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
-                          {featuredItems[activeFeaturedIndex].venue}
-                        </span>
-                      )}
-                    </div>
-                    {/* Tap hint */}
-                    <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-60 transition-opacity">
-                      <span className="text-[10px] font-mono text-[var(--gold-text)]">tap for details</span>
-                      <svg className="w-3 h-3 text-[var(--gold-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-                    </div>
-                  </motion.button>
-                </div>
-
-                <div className="px-6 mt-0 mb-4 text-center">
-                  <button
-                    onClick={() => setActiveTab("Events")}
-                    className="inline-flex flex-col items-center gap-1.5 group"
-                  >
-                    <div className="w-full max-w-[110px] h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-text)]/20 to-transparent opacity-[0.4] group-hover:via-[var(--gold-text)]/60 transition-all duration-500" />
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-[var(--gold-text)] opacity-20 group-hover:opacity-100 transition-opacity">
-                      more events
-                    </span>
-                    <div className="w-full max-w-[110px] h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-text)]/20 to-transparent opacity-[0.4] group-hover:via-[var(--gold-text)]/60 transition-all duration-500" />
-                  </button>
-                </div>
+                    </motion.button>
+                  );
+                })}
               </div>
             </section>
 
-            {/* 6. Benefits Ticker — Single-line ultra-minimal light band */}
-            <section data-testid="benefits-ticker-section" className="relative h-auto py-[4px] bg-[#fdfaf5]/90 border-y border-[var(--gold)]/10 shadow-[inner_0_0_10px_rgba(251,191,36,0.02)] overflow-hidden scale-[1.02] z-[10] flex items-center justify-center group">
-              {/* Subtle Light-Glow/Gradient */}
-              <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-transparent via-[#f3e9d8] to-transparent pointer-events-none" />
-
-              <div className="relative z-10 w-full flex items-center justify-center overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeBenefitIndex}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="flex items-center gap-3 px-4"
-                  >
-                    {/* Logo / Icon Placeholder */}
-                    <div className="bg-black text-[9px] font-black w-10 h-5 flex items-center justify-center rounded-[4px] tracking-tighter border border-black/10">
-                      {benefitsList[activeBenefitIndex].logo}
-                    </div>
-
-                    <div className="flex flex-col items-start leading-[1.1]">
-                      <span className="text-[11px] font-black tracking-[0.08em] uppercase text-[#4a3a1a]">
-                        {benefitsList[activeBenefitIndex].text}
-                      </span>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </section>
-
-
-
-            {/* 7. Explore List — Enhanced Showcase with Dynamic Background */}
-            <section
-              data-testid="explore-projects-section"
-              ref={exploreSectionRef}
-              className={`relative pt-0 pb-24 z-10 overflow-hidden flex flex-col transition-all duration-1000 ease-in-out ${scrolled ? 'opacity-100 grayscale-0 blur-none scale-100' : 'opacity-85 grayscale-[20%] blur-[1px] scale-[0.995]'}`}
-            >
-              {/* Dynamic Background Layer */}
-              <div className="absolute inset-0 z-0">
-                {exploreProjects.map((project, pIdx) => (
-                  <div
-                    key={project.id}
-                    className={`absolute inset-0 transition-all duration-1000 ease-in-out ${pIdx === activeProjectIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
-                  >
-                    {project.gallery?.map((img, iIdx) => (
-                      <div
-                        key={iIdx}
-                        className={`absolute inset-0 bg-cover bg-center transition-all duration-1500 ease-in-out ${iIdx === activeGalleryIndex ? 'opacity-55 scale-100 blur-none' : 'opacity-0 scale-105 blur-sm'}`}
-                        style={{ backgroundImage: `url("${img}")` }}
-                      />
-                    ))}
-                    {/* Radial gradient to focus attention — slightly lightened top for visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-base)]/65 via-transparent to-[var(--bg-base)]" />
-                  </div>
-                ))}
+            {/* ── 3. New Opportunities ── */}
+            <section className="mb-6">
+              <div className="px-5 mb-3.5 flex justify-between items-baseline">
+                <div>
+                  <h2 className="text-[17px] font-bold text-[#fdfaf5] tracking-tight">New Opportunities</h2>
+                  <p className="text-[11px] text-[var(--text-2)] mt-0.5">Open for investment now</p>
+                </div>
+                <button onClick={() => setActiveTab("Projects")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">see all</button>
               </div>
 
-              {/* Grain and Texture Overlay */}
               <div
-                className="absolute inset-0 z-[1] pointer-events-none opacity-[0.15] mix-blend-overlay"
-                style={{
-                  backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`,
-                  backgroundSize: "200px"
+                className="flex overflow-x-auto scrollbar-none snap-x snap-mandatory"
+                onScroll={e => {
+                  const el = e.currentTarget;
+                  const idx = Math.round(el.scrollLeft / el.offsetWidth);
+                  if (idx !== activeOppsIndex && idx < exploreProjects.length) setActiveOppsIndex(idx);
                 }}
-              />
-
-              <div className="relative z-10">
-                <div className="px-6 mb-10 pt-8 flex justify-between items-end">
-                  <div className="flex flex-col gap-1">
-                    <h2
-                      data-testid="explore-projects-header"
-                      className="text-[22px] font-bold tracking-tight text-[#fdfaf5] [text-shadow:_0_2px_12px_rgb(0_0_0_/_60%)] drop-shadow-[0_4px_20px_rgba(0,0,0,1)]"
-                    >
-                      Explore latest projects
-                    </h2>
-                    <p className="text-[14px] text-[var(--text-2)] font-medium">Curated high-yield opportunities</p>
-                  </div>
-
-                  <div className="flex gap-1.5 pb-2">
-                    {exploreProjects.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-1 rounded-full transition-all duration-500 ${i === activeProjectIndex ? 'w-8 bg-[var(--gold)]' : 'w-2 bg-white/20'}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  data-testid="project-showcase-slider"
-                  className="flex gap-0 overflow-x-auto scrollbar-none snap-x snap-mandatory"
-                  onScroll={(e) => {
-                    const el = e.currentTarget;
-                    const width = el.offsetWidth;
-                    const newIndex = Math.round(el.scrollLeft / width);
-                    if (newIndex !== activeProjectIndex && newIndex < exploreProjects.length) {
-                      setActiveProjectIndex(newIndex);
-                    }
-                  }}
-                >
-                  {exploreProjects.map((item, idx) => (
-                    <button
+              >
+                {exploreProjects.map((item) => {
+                  const fundedPct = item.raised && item.target ? Math.round((item.raised / item.target) * 100) : 0;
+                  return (
+                    <div
                       key={item.id}
-                      onClick={() => {
-                        setSelectedHomeItem(item);
-                        setHomeItemType("project");
-                      }}
-                      className="w-full shrink-0 snap-center px-6 flex items-center justify-center active:scale-[0.97] transition-transform"
+                      className="w-full shrink-0 snap-center px-5"
                     >
-                      <div className="w-full max-w-[500px] aspect-[4/5] relative rounded-[40px] overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-2xl flex flex-col justify-end p-8 group">
-                        {/* Project Content Overlay */}
-                        <div className="relative z-10 flex flex-col h-full">
-                          <div className="flex justify-between items-start mb-auto">
-                            <div className="flex flex-wrap gap-2">
-                              {item.badges.map((b, i) => <Badge key={i} label={b} />)}
+                      <div className="w-full max-w-[480px] mx-auto relative rounded-[28px] overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+                        {/* Image */}
+                        <div className="relative h-[240px] overflow-hidden">
+                          {item.gallery?.[0] && (
+                            <img src={item.gallery[0]} alt={item.title} className="w-full h-full object-cover" />
+                          )}
+                          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 60%, rgba(10,8,5,1) 100%)" }} />
+                          {/* Top badges */}
+                          <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+                            <div className="flex flex-wrap gap-1.5">
+                              {item.badges.slice(0, 2).map((b, i) => <Badge key={i} label={b} />)}
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                            {/* IRR callout */}
+                            <div className="bg-black/50 backdrop-blur-md border border-emerald-400/30 rounded-xl px-3 py-1.5 text-right">
+                              <p className="text-[8px] font-mono text-white/40 uppercase tracking-widest leading-none mb-0.5">IRR</p>
+                              <p className="text-[20px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Card body */}
+                        <div className="bg-[#0a0805] px-5 pb-5 pt-3">
+                          {item.partnerLogos && item.partnerLogos.length > 0 && (
+                            <div className="flex gap-2 mb-3 items-center">
+                              {item.partnerLogos.map((logo, lIdx) => (
+                                <div key={lIdx} className="h-6 bg-white/8 rounded-md px-2 border border-white/10 flex items-center">
+                                  <img src={logo} alt="Partner" className="h-5 w-auto object-contain opacity-80" />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          <h3 className="text-[22px] font-bold text-white tracking-tight mb-1 leading-tight">{item.title}</h3>
+                          {item.location && (
+                            <div className="flex items-center gap-1.5 mb-4 text-[11px] font-mono text-[var(--gold-text)]/55">
+                              <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                               </svg>
+                              {item.location}
+                            </div>
+                          )}
+
+                          {/* Metrics */}
+                          <div className="grid grid-cols-3 mb-3 rounded-2xl border border-white/6 overflow-hidden">
+                            <div className="p-3 text-center">
+                              <p className="text-[16px] font-bold text-emerald-400">{item.irr}%</p>
+                              <p className="text-[8px] font-mono text-white/30 uppercase tracking-wider mt-0.5">IRR</p>
+                            </div>
+                            <div className="p-3 text-center border-x border-white/6">
+                              <p className="text-[16px] font-bold text-white/70">{fmt(item.minInvestment || 0)}</p>
+                              <p className="text-[8px] font-mono text-white/30 uppercase tracking-wider mt-0.5">Min. Invest</p>
+                            </div>
+                            <div className="p-3 text-center">
+                              <p className="text-[16px] font-bold text-white/70">{fundedPct}%</p>
+                              <p className="text-[8px] font-mono text-white/30 uppercase tracking-wider mt-0.5">Funded</p>
                             </div>
                           </div>
 
-                          <div className="mt-auto">
-                            {item.partnerLogos && item.partnerLogos.length > 0 && (
-                              <div
-                                data-testid="partner-logos-container"
-                                className="flex gap-2.5 mb-5 items-center flex-wrap"
-                              >
-                                {item.partnerLogos.map((logo, lIdx) => (
-                                  <div
-                                    key={lIdx}
-                                    data-testid={`partner-logo-box-${lIdx}`}
-                                    className="bg-white/10 backdrop-blur-md rounded-md overflow-hidden h-7 w-auto border border-white/10 flex items-center justify-center shadow-lg"
-                                  >
-                                    <img
-                                      src={logo}
-                                      alt="Partner"
-                                      data-testid={`partner-logo-img-${lIdx}`}
-                                      className="h-full w-auto object-contain opacity-90"
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">
-                              {item.title}
-                            </h3>
-                            {item.location && (
-                              <div className="flex items-center gap-1.5 mb-3 text-[11px] font-mono text-[var(--gold-text)]/70">
-                                <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                </svg>
-                                {item.location}
-                              </div>
-                            )}
-                            <p className="text-[13px] text-white/60 leading-relaxed mb-6 line-clamp-2 font-medium">
-                              {item.description}
-                            </p>
-                            {/* Tap hint */}
-                            <div className="flex items-center gap-1.5 opacity-50">
-                              <span className="text-[10px] font-mono text-[var(--gold-text)]">tap for details</span>
-                              <svg className="w-3 h-3 text-[var(--gold-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                          {/* Progress */}
+                          <div className="mb-4">
+                            <div className="flex justify-between text-[9px] font-mono text-white/25 mb-1.5">
+                              <span>₹{item.raised}Cr raised</span>
+                              <span>of ₹{item.target}Cr target</span>
+                            </div>
+                            <div className="h-[3px] bg-white/8 rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full" style={{ width: `${fundedPct}%` }} />
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => open(item, "project")}
+                            className="w-full py-3.5 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[13px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.2)] active:scale-[0.98] transition-transform"
+                          >
+                            Express Interest
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-4">
+                {exploreProjects.map((_, i) => (
+                  <div key={i} className={`h-1 rounded-full transition-all duration-400 ${i === activeOppsIndex ? "w-6 bg-[var(--gold)]" : "w-1.5 bg-white/20"}`} />
+                ))}
+              </div>
+            </section>
+
+            {/* ── 4. Member Perks ── */}
+            <section className="mb-6">
+              <div className="px-5 mb-3.5 flex justify-between items-center">
+                <div>
+                  <h2 className="text-[17px] font-bold text-[#fdfaf5] tracking-tight">Member Perks</h2>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <svg className="w-3 h-3 text-[var(--gold-text)]/60" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
+                    </svg>
+                    <span className="text-[11px] font-mono text-[var(--gold-text)]/60">{userRewards.points.toLocaleString()} pts · {userRewards.tier}</span>
+                  </div>
+                </div>
+                <button onClick={() => setActiveTab("Benefits")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">see all</button>
+              </div>
+              <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
+                {homePerks.map((perk, i) => (
+                  <motion.button
+                    key={perk.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.07, duration: 0.35 }}
+                    onClick={() => setActiveTab("Benefits")}
+                    className="shrink-0 w-[148px] h-[158px] rounded-[22px] overflow-hidden relative border border-white/8 active:scale-[0.95] transition-transform flex flex-col"
+                    style={{ background: `linear-gradient(140deg,${perk.accentColor}55 0%,#0d0a06 100%)` }}
+                  >
+                    <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 80% at 20% 20%,${perk.accentColor}35,transparent)` }} />
+                    {perk.isNew && <div className="absolute top-3 right-3 bg-[var(--gold)] text-black text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider z-10">New</div>}
+                    <div className="relative z-10 p-4 flex flex-col h-full">
+                      <div className="w-10 h-8 rounded-lg flex items-center justify-center mb-auto border border-white/10" style={{ backgroundColor: `${perk.accentColor}60` }}>
+                        <span className="text-[9px] font-black text-white/90 tracking-tight">{perk.logoText}</span>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-bold text-white leading-snug mb-1 text-left">{perk.headline}</p>
+                        <p className="text-[10px] font-mono text-white/38 leading-tight mb-3 text-left">{perk.sub}</p>
+                        <div className="flex items-center gap-1 text-[var(--gold-text)]/50">
+                          <span className="text-[9px] font-mono">activate</span>
+                          <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+              {/* Tier progress */}
+              <div className="mx-5 mt-3 rounded-2xl border border-[var(--gold)]/12 bg-[#0f0c06] p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-mono text-[var(--gold-text)]/60 uppercase tracking-wider">{userRewards.tier}</span>
+                  <span className="text-[10px] font-mono text-white/25">{userRewards.pointsToNextTier.toLocaleString()} pts to {userRewards.nextTier}</span>
+                </div>
+                <div className="w-full h-[3px] rounded-full bg-white/8 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100)}%` }}
+                    transition={{ duration: 1.4, ease: "easeOut", delay: 0.3 }}
+                    className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* ── 5. Upcoming Events ── */}
+            <section className="mb-4">
+              <div className="px-5 mb-3.5 flex justify-between items-baseline">
+                <h2 className="text-[17px] font-bold text-[#fdfaf5] tracking-tight">Upcoming Events</h2>
+                <button onClick={() => setActiveTab("Events")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">see all</button>
+              </div>
+              <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
+                {featuredItems.map((event, i) => {
+                  const [dayNum, monthName] = (() => {
+                    const m = event.date?.match(/(\d{1,2})\s+(\w{3})/);
+                    return m ? [m[1], m[2].toUpperCase()] : ["—", "—"];
+                  })();
+                  return (
+                    <motion.button
+                      key={event.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08, duration: 0.36 }}
+                      onClick={() => open(event, "event")}
+                      className="shrink-0 w-[172px] h-[216px] rounded-[22px] overflow-hidden relative border border-white/8 active:scale-[0.95] transition-transform"
+                    >
+                      {event.image && <img src={event.image} alt={event.title} className="absolute inset-0 w-full h-full object-cover" />}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050302] via-[#050302]/55 to-black/20" />
+                      <div className="relative z-10 p-4 flex flex-col h-full">
+                        <div className="self-start bg-black/55 backdrop-blur-md border border-white/15 rounded-xl px-2.5 py-1.5 text-center">
+                          <p className="text-[16px] font-bold text-white leading-none">{dayNum}</p>
+                          <p className="text-[8px] font-mono text-white/60 tracking-widest mt-0.5">{monthName}</p>
+                        </div>
+                        <div className="mt-auto text-left">
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {event.badges.slice(0, 1).map((b, bi) => <Badge key={bi} label={b} />)}
+                          </div>
+                          <p className="text-[12px] font-bold text-white leading-tight mb-1">{event.title}</p>
+                          <div className="flex items-center justify-between">
+                            <p className="text-[10px] font-mono text-white/35 truncate max-w-[100px]">{event.venue?.split(",")[0]}</p>
+                            <div className="bg-white/12 backdrop-blur-sm border border-white/15 rounded-full px-2.5 py-1">
+                              <span className="text-[9px] font-mono font-bold text-white/80">View</span>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Dynamic explore-more link at section base */}
-              <div className="px-6 mt-6 mb-10 text-center">
-                <button
-                  onClick={() => setActiveTab("Projects")}
-                  className="inline-flex flex-col items-center gap-1.5 group"
-                >
-                  <div className="w-full max-w-[130px] h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-text)]/20 to-transparent opacity-[0.4] group-hover:via-[var(--gold-text)]/60 transition-all duration-500" />
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-[var(--gold-text)] opacity-20 group-hover:opacity-100 transition-opacity">
-                    more projects
-                  </span>
-                  <div className="w-full max-w-[130px] h-[1px] bg-gradient-to-r from-transparent via-[var(--gold-text)]/20 to-transparent opacity-[0.4] group-hover:via-[var(--gold-text)]/60 transition-all duration-500" />
-                </button>
+                    </motion.button>
+                  );
+                })}
               </div>
             </section>
+
           </div>
         )}
 
-        {/* --- DEDICATED TABS --- */}
         {activeTab === "Events" && <EventsTab />}
         {activeTab === "Projects" && <ProjectsTab />}
         {activeTab === "Benefits" && <BenefitsTab />}
 
-        {/* Profile Drawer — global overlay */}
         <ProfileDrawer isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
-
-        {/* Home Detail Drawer — for event/project cards on Home tab */}
-        <DetailDrawer
-          item={selectedHomeItem}
-          onClose={() => setSelectedHomeItem(null)}
-          type={homeItemType}
-        />
-
-        {/* 8. Bottom Nav */}
+        <DetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} type={drawerType} />
         <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
     </>
