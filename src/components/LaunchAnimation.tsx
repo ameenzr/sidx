@@ -36,22 +36,26 @@ export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
   // Drive the whole timeline imperatively for precise control
   useEffect(() => {
     const run = async () => {
-      // Phase 1 — brief hold so framer mounts smoothly
-      await new Promise((r) => setTimeout(r, 200));
+      try {
+        // Phase 1 — brief hold so framer mounts smoothly
+        await new Promise((r) => setTimeout(r, 200));
 
-      // Phase 2 — burst particles + logo scale-up
-      setPhase("burst");
-      await new Promise((r) => setTimeout(r, 900));
+        // Phase 2 — burst particles + logo scale-up
+        setPhase("burst");
+        await new Promise((r) => setTimeout(r, 900));
 
-      // Phase 3 — membership text + tagline reveal
-      setPhase("reveal");
-      await new Promise((r) => setTimeout(r, 1600));
+        // Phase 3 — membership text + tagline reveal
+        setPhase("reveal");
+        await new Promise((r) => setTimeout(r, 1600));
 
-      // Phase 4 — fade everything out
-      setPhase("out");
-      await new Promise((r) => setTimeout(r, 700));
-
-      onComplete();
+        // Phase 4 — fade everything out
+        setPhase("out");
+        await new Promise((r) => setTimeout(r, 700));
+      } catch {
+        // silently skip animation on error
+      } finally {
+        onComplete();
+      }
     };
     run();
   }, []);
@@ -65,7 +69,9 @@ export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
           className="fixed inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ background: "#0a0805" }}
+          style={{
+            background: "radial-gradient(ellipse 120% 60% at 50% 0%, #1c1508 0%, #0a0805 55%, #060402 100%)",
+          }}
         >
           {/* ── Ambient radial glow behind logo ── */}
           <motion.div

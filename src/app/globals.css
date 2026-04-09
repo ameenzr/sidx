@@ -1,5 +1,49 @@
 @import "tailwindcss";
 
+/* ── Theme-switchable tokens ─────────────────────────────────────── */
+:root {
+  /* Page / structural surfaces */
+  --c-base:       #0a0805;
+  --c-surface:    #0e0b07;
+  --c-card:       #0f0c06;
+  --c-elevated:   #1c1508;
+
+  /* Text on page background */
+  --c-text-h:     #fdfaf5;
+  --c-text-body:  rgba(255,255,255,0.60);
+  --c-text-muted: rgba(255,255,255,0.30);
+  --c-text-dim:   rgba(255,255,255,0.18);
+
+  /* Structural borders */
+  --c-border:     rgba(255,255,255,0.07);
+  --c-border-em:  rgba(255,255,255,0.12);
+}
+
+[data-theme="light"] {
+  /* Original design tokens — override for light */
+  --text-0: #14100A;
+  --text-1: #2A2018;
+  --text-2: rgba(20,16,10,0.55);
+  --text-3: rgba(20,16,10,0.35);
+
+  /* Page / structural surfaces */
+  --c-base:       #F5EDE0;
+  --c-surface:    #FDFAF5;
+  --c-card:       #F7F0E4;
+  --c-elevated:   #EDE1CB;
+
+  /* Text on page background */
+  --c-text-h:     #14100A;
+  --c-text-body:  rgba(20,16,10,0.65);
+  --c-text-muted: rgba(20,16,10,0.42);
+  --c-text-dim:   rgba(20,16,10,0.22);
+
+  /* Structural borders */
+  --c-border:     rgba(20,16,10,0.08);
+  --c-border-em:  rgba(20,16,10,0.14);
+}
+
+/* ── Original design tokens ──────────────────────────────────────── */
 :root {
   /* Backgrounds */
   --bg-base: #0C0C0D;
@@ -126,20 +170,36 @@
 }
 
 body {
-  background-color: #0c0c0d;
-  color: var(--text-1);
+  background-color: var(--c-base);
+  color: var(--c-text-h);
   font-family: var(--font-sans);
   position: relative;
   overflow-x: hidden;
   min-height: 100vh;
-  
-  /* Mesh Gradient Background */
-  background-image: 
+
+  /* Mesh Gradient Background — dark */
+  background-image:
     radial-gradient(at 10% 20%, rgba(138, 149, 48, 0.08) 0px, transparent 40%),
     radial-gradient(at 90% 10%, rgba(201, 168, 76, 0.05) 0px, transparent 35%),
     radial-gradient(at 50% 100%, rgba(138, 149, 48, 0.04) 0px, transparent 50%),
     radial-gradient(at 100% 50%, rgba(201, 168, 76, 0.03) 0px, transparent 40%);
   background-attachment: fixed;
+  transition: background-color 0.35s ease;
+}
+
+/* Light theme body overrides */
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(at 15% 20%, rgba(201,168,76,0.07) 0px, transparent 45%),
+    radial-gradient(at 85% 10%, rgba(201,168,76,0.05) 0px, transparent 40%),
+    radial-gradient(at 50% 95%, rgba(180,130,40,0.04) 0px, transparent 50%);
+}
+
+/* Light theme: grain overlay is softer */
+[data-theme="light"] body::before {
+  opacity: 0.22;
+  filter: contrast(200%) brightness(120%) saturate(0%);
+  mix-blend-mode: multiply;
 }
 
 /* Premium Fine Grain Texture Overlay */
@@ -182,9 +242,13 @@ body::after {
  */
 [data-testid="main-header"],
 [data-testid="bottom-nav"] {
-  transform: translateZ(0); 
+  transform: translateZ(0);
   -webkit-transform: translateZ(0);
   will-change: transform;
+}
+
+[data-testid="main-header"] {
+  padding-top: max(10px, env(safe-area-inset-top));
 }
 
 /* This hides the Next.js static indicator/dev-overlay in some versions */

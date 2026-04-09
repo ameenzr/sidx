@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
-import { BottomNav } from "@/components/ui/BottomNav";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -30,10 +30,12 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body data-testid="app-root-body" className="min-h-screen flex flex-col bg-[var(--bg-base)] font-sans">
-        <main data-testid="main-content-area" className="flex-1 w-full scrollbar-none pb-[56px]">
-          {children}
-        </main>
+      <body data-testid="app-root-body" className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: "var(--c-base)", color: "var(--c-text-h)" }}>
+        <ThemeProvider>
+          <main data-testid="main-content-area" className="flex-1 w-full scrollbar-none pb-[56px]">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );
