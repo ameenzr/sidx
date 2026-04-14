@@ -90,7 +90,7 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
               {/* Close */}
               <button
                 onClick={onClose}
-                className="absolute top-5 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/6 border border-white/10 text-white/50 active:scale-90 transition-transform"
+                className="absolute top-5 right-4 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-white/6 border border-white/10 text-white/50 active:scale-90 transition-transform"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

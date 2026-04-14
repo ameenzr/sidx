@@ -29,7 +29,7 @@ export function PortfolioScreen({ onBack }: Props) {
 
       {/* ── Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(165deg, #0d0f14 0%, #080a0c 40%, #0a0908 70%, #060504 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(165deg, var(--c-elevated) 0%, var(--c-surface) 40%, var(--c-base) 100%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 15% 10%, rgba(96,165,250,0.06), transparent 50%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 40% at 85% 80%, rgba(201,168,76,0.05), transparent 50%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 50%, rgba(74,222,128,0.03), transparent 60%)" }} />
@@ -37,26 +37,8 @@ export function PortfolioScreen({ onBack }: Props) {
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
       </div>
 
-      {/* ── Sticky Header ── */}
-      <div
-        className="sticky top-0 z-30 flex items-center gap-3 px-5 pt-12 pb-4"
-        style={{ background: "linear-gradient(to bottom, #0d0f14 70%, transparent)", backdropFilter: "blur(12px)" }}
-      >
-        <button
-          onClick={onBack}
-          className="w-9 h-9 rounded-full bg-white/6 border border-white/10 flex items-center justify-center active:scale-90 transition-transform shrink-0"
-        >
-          <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-        </button>
-        <div>
-          <h1 className="text-[22px] font-bold tracking-tight leading-none" style={{ color: "var(--c-text-h)" }}>My Portfolio</h1>
-          <p className="text-[10px] font-mono text-white/30 mt-0.5">{portfolioInvestments.length} active investments</p>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-5 px-5 relative z-10">
+      <div className="flex flex-col gap-5 px-5 pt-6 relative z-10">
 
         {/* ── 1. Portfolio Hero Card (compact) ── */}
         <motion.div
@@ -64,7 +46,7 @@ export function PortfolioScreen({ onBack }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="relative rounded-[24px] overflow-hidden border border-[var(--gold)]/20 p-5"
-          style={{ background: "linear-gradient(140deg,#1c1508 0%,#0f0c06 60%,#0a0805 100%)" }}
+          style={{ background: "linear-gradient(140deg, var(--c-elevated) 0%, var(--c-card) 60%, var(--c-base) 100%)" }}
         >
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 110% 80% at 10% 20%,rgba(180,130,40,0.14),transparent 60%)" }} />
           {/* Sparkline */}
@@ -163,7 +145,7 @@ export function PortfolioScreen({ onBack }: Props) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.08, duration: 0.34 }}
                   className="rounded-[20px] overflow-hidden border border-white/8 relative"
-                  style={{ background: `linear-gradient(135deg, ${inv.color}0a 0%, #0c0a06 100%)` }}
+                  style={{ background: `linear-gradient(135deg, ${inv.color}15 0%, var(--c-card) 100%)` }}
                 >
                   {/* Left accent */}
                   <div className="absolute left-0 top-0 bottom-0 w-[2.5px] rounded-r-full" style={{ backgroundColor: `${inv.color}60` }} />
@@ -247,7 +229,7 @@ export function PortfolioScreen({ onBack }: Props) {
           <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-3" style={{ color: "var(--c-text-muted)" }}>Membership</p>
           <div
             className="rounded-[20px] p-4 relative overflow-hidden border border-[var(--gold)]/18"
-            style={{ background: "linear-gradient(145deg,#1a1408 0%,#0e0b06 50%,#0a0805 100%)" }}
+            style={{ background: "linear-gradient(145deg, var(--c-elevated) 0%, var(--c-card) 50%, var(--c-base) 100%)" }}
           >
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 100% 70% at 80% 20%, rgba(180,130,40,0.18), transparent)" }} />
             <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #c9a84c, #e8c97a, transparent)" }} />
@@ -259,7 +241,7 @@ export function PortfolioScreen({ onBack }: Props) {
                   </svg>
                   <span className="text-[14px] font-bold text-[var(--gold-text)] tracking-wide">{userRewards.tier}</span>
                 </div>
-                <p className="text-[18px] font-bold text-[#fdfaf5]">{userRewards.points.toLocaleString()}<span className="text-[9px] font-mono text-white/25 ml-1">pts</span></p>
+                <p className="text-[18px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString()}<span className="text-[9px] font-mono text-white/25 ml-1">pts</span></p>
               </div>
               <div className="flex justify-between text-[8px] font-mono text-white/22 mb-1.5">
                 <span>{userRewards.tier}</span>

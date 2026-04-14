@@ -19,6 +19,11 @@ export interface Item {
   minInvestment?: number;
   partnerLogos?: string[];
   location?: string;
+  // Extended project details
+  tenure?: string;
+  structure?: string;
+  exitRoute?: string;
+  highlights?: string[];
 }
 
 // ─── Events ───────────────────────────────────────────────────────────────────
@@ -96,6 +101,16 @@ export const hotProjects: Item[] = [
       "/projects_gallery/luxury_hotel/partner logos/Screenshot 2026-04-02 222431.png",
       "/projects_gallery/luxury_hotel/partner logos/Screenshot 2026-04-02 222446.png",
     ],
+    tenure: "5 Years",
+    structure: "Revenue Share",
+    exitRoute: "Buyback or secondary sale",
+    highlights: [
+      "11 acres including 9 acres organic Ela coffee estate",
+      "20,000 sqft premium resort with wellness facilities",
+      "Three income streams: hospitality, organic produce & retreats",
+      "Wayanad tourism corridor — high occupancy zone",
+      "NABARD-approved agri-tourism classification",
+    ],
   },
   {
     id: "elite_homes",
@@ -119,6 +134,16 @@ export const hotProjects: Item[] = [
     partnerLogos: [
       "/projects_gallery/olympus_apartment/partner logos/aecom logo.png",
       "/projects_gallery/olympus_apartment/partner logos/hilite builders logo.png",
+    ],
+    tenure: "3 Years",
+    structure: "Equity (Villa Ownership)",
+    exitRoute: "Sale of completed villa unit",
+    highlights: [
+      "Phase 1 of 12 semi-luxury designer villas",
+      "Landscaped gardens & secure gated perimeter",
+      "Prime NRK home-buyer corridor in Malappuram",
+      "RERA-compliant with clear title guarantee",
+      "Flexible payment — 30% on booking, balance on possession",
     ],
   },
   {
@@ -144,6 +169,16 @@ export const hotProjects: Item[] = [
       "/projects_gallery/skin_care/partner logos/Screenshot 2026-04-02 222327.png",
       "/projects_gallery/skin_care/partner logos/olay logo.png",
     ],
+    tenure: "7 Years",
+    structure: "Equity + Profit Share",
+    exitRoute: "Strategic acquisition or franchise buyout",
+    highlights: [
+      "Targets ₹7,000 Cr postpartum-care market in South India",
+      "Traditional Ayurvedic protocols + clinical care — unique positioning",
+      "Recurring revenue model: monthly packages & memberships",
+      "Expanding to 6 centres across Kerala metros in Phase 1",
+      "Anchor partnerships with leading Ayurvedic research institutes",
+    ],
   },
   {
     id: "babel_aspen_glow",
@@ -167,6 +202,16 @@ export const hotProjects: Item[] = [
     partnerLogos: [
       "/projects_gallery/luxury_hotel/partner logos/Screenshot 2026-04-02 222530.png",
     ],
+    tenure: "6 Years",
+    structure: "Revenue Share (Venue Operations)",
+    exitRoute: "REIT listing or promoter buyback",
+    highlights: [
+      "30,000 sqft multi-purpose convention centre",
+      "Seats 2,000–4,000 — North Kerala's largest event venue",
+      "Target 200+ events per year from Year 1",
+      "Revenue streams: event hire, F&B, branding & sponsorships",
+      "Kerala's only premium events venue in Kannur district",
+    ],
   },
   {
     id: "wynad_eco_township",
@@ -189,6 +234,16 @@ export const hotProjects: Item[] = [
     location: "Vythiri, Wayanad, Kerala",
     partnerLogos: [
       "/projects_gallery/olympus_apartment/partner logos/aecom logo.png",
+    ],
+    tenure: "10 Years",
+    structure: "Equity (Plot + Development Rights)",
+    exitRoute: "Secondary market / plot resale",
+    highlights: [
+      "Self-contained eco-township: residential, commercial & civic zones",
+      "Green energy infrastructure — solar & rainwater harvesting",
+      "Integrated smart security & community management system",
+      "International schools & healthcare cluster within township",
+      "Positioned near Wayanad Wildlife Sanctuary for premium value",
     ],
   },
 ];

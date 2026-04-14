@@ -152,7 +152,7 @@ function ServiceCardItem({ svc }: { svc: ServiceCard }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
       className="rounded-[22px] overflow-hidden border border-white/8"
-      style={{ background: `linear-gradient(145deg, ${svc.accentBg} 0%, #090806 100%)` }}
+      style={{ background: `linear-gradient(145deg, ${svc.accentBg} 0%, var(--c-card) 100%)` }}
     >
       <div className="h-[2.5px] w-full" style={{ background: `linear-gradient(90deg, ${svc.accentColor}, transparent)` }} />
       <button

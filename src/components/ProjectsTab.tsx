@@ -43,7 +43,7 @@ export function ProjectsTab() {
 
         {/* Header */}
         <div className="px-6 mb-5">
-          <h1 className="text-[28px] font-bold text-[#fdfaf5] tracking-tight mb-1">Investment Deals</h1>
+          <h1 className="text-[28px] font-bold text-[var(--c-text-h)] tracking-tight mb-1">Investment Deals</h1>
           <p className="text-[12px] font-mono text-white/35">
             ₹{totalTarget}Cr across {exploreProjects.length} active deals · avg {avgIRR}% IRR
           </p>
@@ -67,7 +67,7 @@ export function ProjectsTab() {
         </div>
 
         {/* Cards */}
-        <div className="flex flex-col gap-5 px-5">
+        <div className="flex flex-col gap-3.5 px-5">
           <AnimatePresence mode="popLayout">
             {filtered.map((item, idx) => {
               const fundedPct = item.raised && item.target ? Math.round((item.raised / item.target) * 100) : 0;
@@ -82,96 +82,79 @@ export function ProjectsTab() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ delay: idx * 0.08, duration: 0.38 }}
-                  className="rounded-[24px] overflow-hidden border border-white/8 bg-[#0f0c06] shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
+                  onClick={() => setSelectedItem(item)}
+                  className="rounded-[20px] overflow-hidden border border-white/8 bg-[var(--c-card)] shadow-[0_8px_40px_rgba(0,0,0,0.5)] active:scale-[0.99] transition-transform cursor-pointer"
                 >
                   {/* Image banner */}
-                  <div className="relative h-[210px] overflow-hidden">
+                  <div className="relative h-[160px] overflow-hidden">
                     <img
                       src={item.gallery?.[0] || item.image || ""}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(15,12,6,0.95) 100%)" }} />
+                    <div className="absolute inset-0 img-fade-overlay" />
 
                     {/* IRR badge — top right */}
-                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-emerald-400/30 rounded-2xl px-3.5 py-2 text-right">
-                      <p className="text-[8px] font-mono text-white/40 uppercase tracking-widest leading-none mb-1">IRR</p>
-                      <p className="text-[24px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
+                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-emerald-400/30 rounded-xl px-2.5 py-1.5 text-right">
+                      <p className="text-[7px] font-mono text-white/40 uppercase tracking-widest leading-none mb-0.5">IRR</p>
+                      <p className="text-[18px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
                     </div>
 
                     {/* Status indicators — top left */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-1.5">
+                    <div className="absolute top-3 left-3 flex flex-col gap-1">
                       {isHot && (
-                        <div className="flex items-center gap-1.5 bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm rounded-full px-2.5 py-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-                          <span className="text-[9px] font-bold text-orange-400 uppercase tracking-wider">Hot Deal</span>
+                        <div className="flex items-center gap-1 bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm rounded-full px-2 py-0.5">
+                          <span className="w-1 h-1 rounded-full bg-orange-400" />
+                          <span className="text-[8px] font-bold text-orange-400 uppercase tracking-wider">Hot Deal</span>
                         </div>
                       )}
                       {isClosing && (
-                        <div className="flex items-center gap-1.5 bg-red-600/20 border border-red-500/40 backdrop-blur-sm rounded-full px-2.5 py-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                          <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider">Filling Fast</span>
+                        <div className="flex items-center gap-1 bg-red-600/20 border border-red-500/40 backdrop-blur-sm rounded-full px-2 py-0.5">
+                          <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse" />
+                          <span className="text-[8px] font-bold text-red-400 uppercase tracking-wider">Filling Fast</span>
                         </div>
                       )}
                     </div>
 
                     {/* Badges — bottom */}
-                    <div className="absolute bottom-4 left-4 flex flex-wrap gap-1.5">
+                    <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
                       {item.badges.slice(0, 2).map((b, i) => <Badge key={i} label={b} />)}
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-5">
-                    {/* Partner logos */}
-                    {item.partnerLogos && item.partnerLogos.length > 0 && (
-                      <div className="flex gap-2 mb-3 items-center flex-wrap">
-                        {item.partnerLogos.map((logo, lIdx) => (
-                          <div key={lIdx} className="h-7 bg-white/8 rounded-lg px-2.5 border border-white/10 flex items-center">
-                            <img src={logo} alt="Partner" className="h-5 w-auto object-contain opacity-80" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  <div className="px-4 pt-3.5 pb-4">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h3 className="text-[17px] font-bold text-white tracking-tight leading-tight">{item.title}</h3>
+                      {item.location && (
+                        <span className="text-[10px] font-mono text-[var(--gold-text)]/50 text-right shrink-0 mt-0.5 max-w-[40%] leading-tight">{item.location.split(",")[0]}</span>
+                      )}
+                    </div>
 
-                    <h3 className="text-[20px] font-bold text-white tracking-tight mb-1 leading-tight">{item.title}</h3>
-
-                    {item.location && (
-                      <div className="flex items-center gap-1.5 mb-3 text-[11px] font-mono text-[var(--gold-text)]/55">
-                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                        </svg>
-                        {item.location}
+                    {/* Stats row */}
+                    <div className="grid grid-cols-3 mb-3 rounded-xl border border-white/6 overflow-hidden bg-white/[0.02]">
+                      <div className="py-2 text-center">
+                        <p className="text-[14px] font-bold text-emerald-400">{item.irr}%</p>
+                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">IRR</p>
                       </div>
-                    )}
-
-                    <p className="text-[12px] text-white/40 mb-4 line-clamp-2 leading-relaxed">{item.description}</p>
-
-                    {/* Stats grid */}
-                    <div className="grid grid-cols-3 mb-4 rounded-2xl border border-white/6 overflow-hidden bg-white/[0.02]">
-                      <div className="p-3 text-center">
-                        <p className="text-[16px] font-bold text-emerald-400">{item.irr}%</p>
-                        <p className="text-[8px] font-mono text-white/28 uppercase tracking-wider mt-0.5">IRR</p>
+                      <div className="py-2 text-center border-x border-white/6">
+                        <p className="text-[14px] font-bold text-white/70">{fmt(item.minInvestment || 0)}</p>
+                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">Min.</p>
                       </div>
-                      <div className="p-3 text-center border-x border-white/6">
-                        <p className="text-[16px] font-bold text-white/70">{fmt(item.minInvestment || 0)}</p>
-                        <p className="text-[8px] font-mono text-white/28 uppercase tracking-wider mt-0.5">Min. Invest</p>
-                      </div>
-                      <div className="p-3 text-center">
-                        <p className="text-[16px] font-bold text-white/70">₹{item.target}Cr</p>
-                        <p className="text-[8px] font-mono text-white/28 uppercase tracking-wider mt-0.5">Target</p>
+                      <div className="py-2 text-center">
+                        <p className="text-[14px] font-bold text-white/70">₹{item.target}Cr</p>
+                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">Target</p>
                       </div>
                     </div>
 
                     {/* Funding progress */}
                     {item.raised !== undefined && item.target !== undefined && (
-                      <div className="mb-4">
-                        <div className="flex justify-between text-[10px] font-mono text-white/30 mb-1.5">
+                      <div>
+                        <div className="flex justify-between text-[9px] font-mono text-white/30 mb-1">
                           <span>₹{item.raised}Cr raised</span>
-                          <span className="font-bold text-[var(--gold-text)]/60">{fundedPct}% funded</span>
+                          <span className="text-[var(--gold-text)]/60">{fundedPct}% funded</span>
                         </div>
-                        <div className="h-[4px] bg-white/8 rounded-full overflow-hidden">
+                        <div className="h-[3px] bg-white/8 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${fundedPct}%` }}
@@ -181,13 +164,6 @@ export function ProjectsTab() {
                         </div>
                       </div>
                     )}
-
-                    <button
-                      onClick={() => setSelectedItem(item)}
-                      className="w-full py-3.5 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[13px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.2)] active:scale-[0.98] transition-transform"
-                    >
-                      Express Interest
-                    </button>
                   </div>
                 </motion.div>
               );

@@ -7,6 +7,13 @@ import { motion, AnimatePresence } from "framer-motion";
    TYPES
    ═══════════════════════════════════════════════════ */
 
+const SERVICE_PHOTOS: Record<string, string> = {
+  concierge: "/airport_services_photos/Personal%20Concierge%20Service.webp",
+  pickup:    "/airport_services_photos/Priority%20Pickup%20or%20Drop.webp",
+  lounge:    "/airport_services_photos/prioraty%20lounge%20accesss.webp",
+  porter:    "/airport_services_photos/priority_porter_service.webp",
+};
+
 interface AirportService {
   id: string;
   title: string;
@@ -36,7 +43,6 @@ const airports: Airport[] = [
       { id: "lounge", title: "CIAL Executive Lounge", tagline: "Complimentary meals, Wi-Fi, shower & rest area", accentColor: "#c9a84c" },
       { id: "pickup", title: "Chauffeur Pickup & Drop", tagline: "All Kerala districts — pre-scheduled for arrival", accentColor: "#4ade80" },
       { id: "porter", title: "Priority Porter Service", tagline: "Dedicated baggage handling curb-to-check-in", accentColor: "#a78bfa" },
-      { id: "forex", title: "Forex & SIM Counter", tagline: "Pre-ordered currency & Jio/Airtel NRK SIMs at gate", accentColor: "#fb923c" },
     ],
   },
   {
@@ -74,7 +80,6 @@ const airports: Airport[] = [
       { id: "lounge", title: "Marhaba Lounge Access", tagline: "Complimentary entry for Sid-X Gold members", accentColor: "#c9a84c" },
       { id: "pickup", title: "Airport Transfer", tagline: "Sedan & SUV transfers across Dubai & Sharjah", accentColor: "#60a5fa" },
       { id: "cargo", title: "Cargo & Courier", tagline: "Unaccompanied baggage to Kerala — door delivery", accentColor: "#4ade80" },
-      { id: "forex", title: "Forex Pre-Order", tagline: "INR at competitive rates — collect at terminal", accentColor: "#fb923c" },
     ],
   },
   {
@@ -201,31 +206,19 @@ export function AirportsScreen({ onBack, initialAirport = "COK", highlightServic
 
       {/* ── Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(165deg, #0d0f14 0%, #080a0c 40%, #0a0908 70%, #060504 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(165deg, var(--c-elevated) 0%, var(--c-surface) 40%, var(--c-base) 100%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 15% 10%, rgba(96,165,250,0.06), transparent 50%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 40% at 85% 80%, rgba(201,168,76,0.05), transparent 50%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 50%, rgba(74,222,128,0.03), transparent 60%)" }} />
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
       </div>
 
-      {/* ── Header ── */}
-      <div className="px-5 pt-4 pb-3 flex items-center gap-3 relative z-10">
-        <button onClick={onBack} className="flex items-center gap-2 text-white/50 active:text-white transition-colors active:scale-95 group">
-          <svg className="w-5 h-5 group-active:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-        </button>
-        <div className="flex-1">
-          <h1 className="text-[22px] font-bold text-[var(--c-text-h)] tracking-tight">Airport Services</h1>
-          <p className="text-[10px] font-mono text-white/28">Kerala & GCC airport concierge</p>
-        </div>
-      </div>
 
       {/* ── Airport Selector (current) ── */}
-      <div className="px-5 mb-4 relative z-10">
+      <div className="px-5 mb-3 relative z-10">
         <button
           onClick={() => setShowSearch(s => !s)}
-          className="w-full rounded-[18px] border border-white/8 p-3.5 flex items-center gap-3 active:scale-[0.99] transition-transform"
+          className="w-full rounded-[14px] border border-white/8 p-3 flex items-center gap-3 active:scale-[0.99] transition-transform"
           style={{ background: `${activeAirport.color}0a` }}
         >
           <div
@@ -329,13 +322,14 @@ export function AirportsScreen({ onBack, initialAirport = "COK", highlightServic
           transition={{ duration: 0.25 }}
           className="px-5 relative z-10"
         >
-          <p className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-3">
+          <p className="text-[9px] font-mono text-white/20 uppercase tracking-widest mb-2">
             {activeAirport.services.length} services available
           </p>
 
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {activeAirport.services.map((svc, i) => {
               const isHighlighted = highlightService === svc.id;
+              const photo = SERVICE_PHOTOS[svc.id];
               return (
                 <motion.div
                   key={svc.id}
@@ -345,34 +339,55 @@ export function AirportsScreen({ onBack, initialAirport = "COK", highlightServic
                   transition={{ delay: i * 0.05, duration: 0.28 }}
                 >
                   <button
-                    className={`w-full text-left rounded-[18px] overflow-hidden border active:scale-[0.98] transition-all relative ${
+                    className={`w-full text-left rounded-[14px] overflow-hidden border active:scale-[0.98] transition-all relative flex items-center gap-3 p-3 ${
                       isHighlighted ? "border-white/20 ring-1 ring-white/10" : "border-white/6"
                     }`}
-                    style={{ background: `linear-gradient(135deg, ${svc.accentColor}${isHighlighted ? "18" : "0c"} 0%, #0a0906 100%)` }}
+                    style={{ background: photo
+                      ? "var(--c-card)"
+                      : `linear-gradient(135deg, ${svc.accentColor}${isHighlighted ? "22" : "12"} 0%, var(--c-card) 100%)`
+                    }}
                   >
-                    {/* Left accent */}
-                    <div className="absolute left-0 top-0 bottom-0 w-[2.5px] rounded-r-full" style={{ backgroundColor: `${svc.accentColor}60` }} />
-                    <div className="flex items-center gap-3.5 p-4 pl-5">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-bold text-white leading-tight">{svc.title}</p>
-                        <p className="text-[10px] text-white/35 mt-0.5 leading-snug">{svc.tagline}</p>
+                    {/* Photo thumbnail OR accent dot */}
+                    {photo ? (
+                      <div className="shrink-0 w-[52px] h-[52px] rounded-[10px] overflow-hidden">
+                        <img
+                          src={photo}
+                          alt={svc.title}
+                          className="w-full h-full object-cover object-center"
+                        />
                       </div>
+                    ) : (
                       <div
-                        className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center border"
-                        style={{ borderColor: `${svc.accentColor}25`, backgroundColor: `${svc.accentColor}12` }}
+                        className="shrink-0 w-[52px] h-[52px] rounded-[10px] flex items-center justify-center"
+                        style={{ backgroundColor: `${svc.accentColor}18`, border: `1px solid ${svc.accentColor}28` }}
                       >
-                        <svg className="w-3.5 h-3.5" style={{ color: svc.accentColor }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: svc.accentColor }} />
                       </div>
+                    )}
+
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-bold text-white leading-tight">{svc.title}</p>
+                      <p className="text-[10px] text-white/35 mt-0.5 leading-snug line-clamp-1">{svc.tagline}</p>
                     </div>
+
+                    {/* Arrow */}
+                    <div
+                      className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: `${svc.accentColor}15` }}
+                    >
+                      <svg className="w-3 h-3" style={{ color: svc.accentColor }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </div>
+
                     {isHighlighted && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: [0, 1, 0] }}
                         transition={{ duration: 2, ease: "easeInOut" }}
-                        className="absolute inset-0 rounded-[18px] pointer-events-none"
-                        style={{ boxShadow: `inset 0 0 20px ${svc.accentColor}20` }}
+                        className="absolute inset-0 rounded-[14px] pointer-events-none"
+                        style={{ boxShadow: `inset 0 0 18px ${svc.accentColor}22` }}
                       />
                     )}
                   </button>

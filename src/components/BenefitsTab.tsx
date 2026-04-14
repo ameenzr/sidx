@@ -135,7 +135,7 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
           <motion.div key="bdr"
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[210] bg-[#0e0b07] rounded-t-[28px] overflow-hidden max-h-[88vh] flex flex-col shadow-[0_-20px_80px_rgba(0,0,0,0.8)]"
+            className="fixed bottom-0 left-0 right-0 z-[210] bg-[var(--c-card)] rounded-t-[28px] overflow-hidden max-h-[88vh] flex flex-col shadow-[0_-20px_80px_rgba(0,0,0,0.8)]"
           >
             <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0 border-b border-white/5">
               <button onClick={onClose} className="flex items-center gap-2 text-white/50 hover:text-white/90 transition-colors active:scale-95 group">
@@ -158,7 +158,7 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
                 </div>
                 <div>
                   <p className="text-[11px] font-mono text-white/35 uppercase tracking-wider mb-0.5">{benefit.partner}</p>
-                  <h2 className="text-[20px] font-bold text-[#fdfaf5] tracking-tight leading-tight">{benefit.title}</h2>
+                  <h2 className="text-[20px] font-bold text-[var(--c-text-h)] tracking-tight leading-tight">{benefit.title}</h2>
                   {benefit.isActive && (
                     <div className="flex items-center gap-1 mt-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -209,7 +209,7 @@ export function BenefitsTab() {
 
         {/* Header */}
         <div className="px-6 mb-5">
-          <h1 className="text-[28px] font-bold text-[#fdfaf5] tracking-tight mb-1">Member Privileges</h1>
+          <h1 className="text-[28px] font-bold text-[var(--c-text-h)] tracking-tight mb-1">Member Privileges</h1>
           <p className="text-[12px] font-mono text-white/35">Exclusive perks for SID-X club members</p>
         </div>
 
@@ -217,7 +217,7 @@ export function BenefitsTab() {
         <div className="px-5 mb-5">
           <div
             className="relative rounded-[24px] overflow-hidden border border-[var(--gold)]/20 p-5"
-            style={{ background: "linear-gradient(135deg,#1c1508 0%,#0f0c06 60%,#0a0805 100%)" }}
+            style={{ background: "linear-gradient(135deg, var(--c-elevated) 0%, var(--c-surface) 60%, var(--c-base) 100%)" }}
           >
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 90% 80% at 10% 20%,rgba(180,130,40,0.14),transparent 60%)" }} />
             <div className="relative z-10">
@@ -233,7 +233,7 @@ export function BenefitsTab() {
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-mono text-white/30 uppercase tracking-wider mb-0.5">Points Balance</p>
-                  <p className="text-[22px] font-bold text-[#fdfaf5]">{userRewards.points.toLocaleString()}</p>
+                  <p className="text-[22px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString()}</p>
                 </div>
               </div>
               <div className="flex justify-between text-[10px] font-mono text-white/30 mb-2">
@@ -282,9 +282,9 @@ export function BenefitsTab() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ delay: idx * 0.07, duration: 0.34 }}
                 className="text-left rounded-[20px] overflow-hidden border border-white/8 active:scale-[0.98] transition-transform relative"
-                style={{ background: `linear-gradient(130deg,${benefit.accentColor}40 0%,#0e0b07 100%)` }}
+                style={{ background: `linear-gradient(130deg,${benefit.accentColor}28 0%, var(--c-card) 100%)` }}
               >
-                <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 80% at 5% 50%,${benefit.accentColor}28,transparent)` }} />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 80% at 5% 50%,${benefit.accentColor}18,transparent)` }} />
                 <div className="relative z-10 flex items-center gap-4 p-4">
                   {/* Logo block */}
                   <div

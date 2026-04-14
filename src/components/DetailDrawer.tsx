@@ -59,7 +59,7 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
             exit={{ opacity: 0 }}
             onClick={onClose}
             style={{ opacity }}
-            className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-xl"
           />
 
           {/* Full-screen rising drawer */}
@@ -74,7 +74,7 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 32, stiffness: 260, mass: 0.8 }}
-            className="fixed inset-x-0 bottom-0 top-[5vh] z-[210] bg-[#0e0b07] rounded-t-[28px] flex flex-col shadow-[0_-30px_100px_rgba(0,0,0,0.9)] overflow-hidden touch-none"
+            className="fixed inset-x-0 bottom-0 top-[5vh] z-[210] bg-[var(--c-card)] rounded-t-[28px] flex flex-col shadow-[0_-30px_100px_rgba(0,0,0,0.9)] overflow-hidden touch-none"
           >
             {/* Drag handle + Back bar */}
             <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0 border-b border-white/5 cursor-grab active:cursor-grabbing">
@@ -149,8 +149,8 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                     />
                   </AnimatePresence>
                   {/* Glassy Overlay for edge fade */}
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0e0b07] via-transparent to-transparent z-10" />
-                  <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#0e0b07]/40 to-transparent z-10" />
+                  <div className="absolute inset-0 pointer-events-none img-fade-bottom z-10" />
+                  <div className="absolute inset-x-0 top-0 h-12 img-fade-top-bar z-10" />
                   
                   {/* Gallery Controls */}
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
@@ -176,7 +176,7 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                     transition={{ duration: 0.6 }}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0e0b07] via-[#0e0b07]/20 to-transparent" />
+                  <div className="absolute inset-0 img-fade-bottom" />
                 </div>
               ) : null}
 
@@ -196,7 +196,7 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl font-bold text-[#fdfaf5] tracking-tight mb-2"
+                  className="text-2xl font-bold text-[var(--c-text-h)] tracking-tight mb-2"
                 >
                   {item.title}
                 </motion.h2>
@@ -293,6 +293,58 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                 >
                   {item.description}
                 </motion.p>
+
+                {/* Project Highlights */}
+                {type === "project" && item.highlights && item.highlights.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.33 }}
+                    className="mb-6"
+                  >
+                    <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-3">Key Highlights</p>
+                    <div className="flex flex-col gap-2">
+                      {item.highlights.map((h, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="mt-[5px] w-1.5 h-1.5 rounded-full bg-[var(--gold)] shrink-0" />
+                          <p className="text-[13px] text-white/65 leading-snug">{h}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Deal Structure */}
+                {type === "project" && (item.tenure || item.structure || item.exitRoute) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.36 }}
+                    className="mb-8 rounded-2xl border border-white/8 bg-white/[0.03] overflow-hidden"
+                  >
+                    <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] px-4 pt-4 pb-3 border-b border-white/6">Deal Structure</p>
+                    <div className="divide-y divide-white/6">
+                      {item.tenure && (
+                        <div className="flex justify-between items-center px-4 py-3">
+                          <span className="text-[12px] font-mono text-white/40">Investment Tenure</span>
+                          <span className="text-[13px] font-bold text-white/80">{item.tenure}</span>
+                        </div>
+                      )}
+                      {item.structure && (
+                        <div className="flex justify-between items-center px-4 py-3">
+                          <span className="text-[12px] font-mono text-white/40">Structure</span>
+                          <span className="text-[13px] font-bold text-white/80 text-right max-w-[55%]">{item.structure}</span>
+                        </div>
+                      )}
+                      {item.exitRoute && (
+                        <div className="flex justify-between items-center px-4 py-3">
+                          <span className="text-[12px] font-mono text-white/40">Exit Route</span>
+                          <span className="text-[13px] font-bold text-white/80 text-right max-w-[55%]">{item.exitRoute}</span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
 
                 {/* Partner Logos */}
                 {item.partnerLogos && item.partnerLogos.length > 0 && (

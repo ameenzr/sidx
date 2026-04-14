@@ -44,7 +44,7 @@ export function EventsTab() {
 
         {/* Header */}
         <div className="px-6 mb-5">
-          <h1 className="text-[28px] font-bold text-[#fdfaf5] tracking-tight mb-1">Events</h1>
+          <h1 className="text-[28px] font-bold text-[var(--c-text-h)] tracking-tight mb-1">Events</h1>
           <p className="text-[12px] font-mono text-white/35">{featuredItems.length} curated events · NRK members only</p>
         </div>
 
@@ -81,13 +81,13 @@ export function EventsTab() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ delay: idx * 0.08, duration: 0.36 }}
-                  className="rounded-[24px] overflow-hidden border border-white/8 bg-[#0f0c06] shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
+                  className="rounded-[24px] overflow-hidden border border-white/8 bg-[var(--c-card)] shadow-[0_8px_40px_rgba(0,0,0,0.4)]"
                 >
                   {/* Poster */}
                   {item.image && (
                     <div className="relative h-[190px] overflow-hidden">
                       <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(15,12,6,0.95) 100%)" }} />
+                      <div className="absolute inset-0 img-fade-overlay" />
 
                       {/* Date chip */}
                       <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md border border-white/20 rounded-2xl px-3.5 py-2.5 text-center min-w-[52px]">

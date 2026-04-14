@@ -15,6 +15,8 @@ import {
 import { motion } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { CommunityTab } from "@/components/CommunityTab";
+import { EventsScreen } from "@/components/EventsScreen";
+import { BenefitsScreen } from "@/components/BenefitsScreen";
 import { ProjectsTab } from "@/components/ProjectsTab";
 import { TravelTab } from "@/components/TravelTab";
 import { AirportsScreen } from "@/components/AirportsScreen";
@@ -68,6 +70,27 @@ export default function Home() {
     return () => clearTimeout(t);
   }, []);
 
+  const isSubScreen = ["Portfolio", "Airports", "Events", "Benefits"].includes(activeTab);
+
+  const getScreenTitle = () => {
+    switch (activeTab) {
+      case "Portfolio": return "My Portfolio";
+      case "Airports": return "Airport Services";
+      case "Events": return "Events";
+      case "Benefits": return "Member Privileges";
+      default: return "";
+    }
+  };
+
+  const handleBack = () => {
+    if (activeTab === "Airports") setActiveTab("Travel");
+    else if (activeTab === "Events" || activeTab === "Benefits") setActiveTab("Community");
+    else if (activeTab === "Portfolio") setActiveTab("Home");
+    else setActiveTab("Home");
+  };
+
+  const isAnyDrawerOpen = isProfileOpen || !!selectedItem;
+
   return (
     <>
       <LaunchAnimation onComplete={() => setHasLaunched(true)} />
@@ -75,34 +98,72 @@ export default function Home() {
         className="flex flex-col min-h-full pt-[56px] overflow-x-hidden"
         style={{ opacity: hasLaunched ? 1 : 0, transition: "opacity 0.5s ease-in-out", pointerEvents: hasLaunched ? "auto" : "none" }}
       >
-        {/* ── Header ── */}
+        {/* ── Global Navbar ── */}
         <header
           data-testid="main-header"
-          className="fixed top-0 left-0 right-0 z-[150] flex justify-between items-center px-4 py-2.5"
+          className="fixed top-0 left-0 right-0 z-[150] flex items-center px-4 py-2.5 transition-all duration-300"
           style={{
-            backdropFilter: "blur(20px) saturate(160%)",
-            WebkitBackdropFilter: "blur(20px) saturate(160%)",
+            backdropFilter: isAnyDrawerOpen ? "blur(30px) saturate(180%) brightness(0.7)" : "blur(20px) saturate(160%)",
+            WebkitBackdropFilter: isAnyDrawerOpen ? "blur(30px) saturate(180%) brightness(0.7)" : "blur(20px) saturate(160%)",
             backgroundColor: "color-mix(in srgb, var(--c-base) 72%, transparent)",
             borderBottom: "1px solid var(--c-border)",
           }}
         >
-          <div className="h-6 flex items-center">
-            <img src="/sid-x_logo.png" alt="SID-X" className="h-full w-auto object-contain" />
+          <div className="flex-1 flex items-center min-w-0">
+            {isSubScreen ? (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-3 w-full"
+              >
+                <button
+                  onClick={handleBack}
+                  className="w-8 h-8 rounded-full bg-white/6 border border-white/8 flex items-center justify-center active:scale-90 transition-transform shrink-0"
+                >
+                  <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                  </svg>
+                </button>
+                <h1 className="text-[18px] font-bold text-[var(--c-text-h)] tracking-tight truncate">
+                  {getScreenTitle()}
+                </h1>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="h-6 flex items-center"
+              >
+                <img src="/sid-x_logo.png" alt="SID-X" className="h-full w-auto object-contain" />
+              </motion.div>
+            )}
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1.5 bg-[var(--gold)]/10 border border-[var(--gold)]/25 rounded-full px-3 py-1.5">
-              <svg className="w-3 h-3 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
-              </svg>
-              <span className="text-[11px] font-mono font-bold text-[var(--gold-text)]">{userRewards.points.toLocaleString()}</span>
-            </div>
-            <button
-              onClick={() => setIsProfileOpen(true)}
-              className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] active:scale-90 transition-transform"
+
+          {!isSubScreen && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2.5 shrink-0"
             >
-              FA
-            </button>
-          </div>
+              <div className="flex items-center gap-1.5 bg-[var(--gold)]/10 border border-[var(--gold)]/25 rounded-full px-3 py-1.5">
+                <svg className="w-3 h-3 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
+                </svg>
+                <span className="text-[11px] font-mono font-bold text-[var(--gold-text)]">{userRewards.points.toLocaleString()}</span>
+              </div>
+              <button
+                onClick={() => setIsProfileOpen(true)}
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] active:scale-90 transition-transform"
+              >
+                FA
+              </button>
+            </motion.div>
+          )}
+
+          {/* Optional blur overlay inside header for content but not background if needed, 
+              but blur is already on the header style. 
+              The user wants "blur out navbar" when details drawer pops up. 
+              I've added filter to the header itself. 
+          */}
         </header>
 
         {/* ════════ HOME ════════ */}
@@ -343,20 +404,20 @@ export default function Home() {
                 <motion.button
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05, duration: 0.36 }}
                   onClick={() => openAirports("COK", "concierge")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-blue-400/12 relative active:scale-[0.95] transition-transform"
-                  style={{ background: "linear-gradient(155deg, rgba(56,100,180,0.12) 0%, #080a0e 100%)" }}
+                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
                 >
+                  <img src="/airport_services_photos/Personal%20Concierge%20Service.webp" alt="Airport Concierge" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
                   <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #3864b4, #5b8de8, transparent)" }} />
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 30% 25%, rgba(56,100,180,0.15), transparent 60%)" }} />
                   <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-400/20 mb-auto" style={{ backgroundColor: "rgba(56,100,180,0.15)" }}>
-                      <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(56,100,180,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-1">Airport Concierge</p>
-                      <p className="text-[9px] font-mono text-white/30">COK · CCJ · TRV</p>
+                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Airport Concierge</p>
+                      <p className="text-[9px] font-mono text-white/55">COK · CCJ · TRV</p>
                     </div>
                   </div>
                 </motion.button>
@@ -365,20 +426,20 @@ export default function Home() {
                 <motion.button
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.12, duration: 0.36 }}
                   onClick={() => openAirports("COK", "pickup")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-[var(--olive)]/12 relative active:scale-[0.95] transition-transform"
-                  style={{ background: "linear-gradient(155deg, rgba(138,149,48,0.10) 0%, #090a06 100%)" }}
+                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
                 >
+                  <img src="/airport_services_photos/Priority%20Pickup%20or%20Drop.webp" alt="Priority Pickup" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
                   <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #6b7530, #a8b840, transparent)" }} />
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 30% 25%, rgba(138,149,48,0.12), transparent 60%)" }} />
                   <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--olive)]/20 mb-auto" style={{ backgroundColor: "rgba(138,149,48,0.12)" }}>
-                      <svg className="w-4 h-4 text-[var(--olive-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(107,117,37,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-1">Priority Pickup</p>
-                      <p className="text-[9px] font-mono text-white/30">Chauffeur transfers</p>
+                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Priority Pickup</p>
+                      <p className="text-[9px] font-mono text-white/55">Chauffeur transfers</p>
                     </div>
                   </div>
                 </motion.button>
@@ -387,20 +448,20 @@ export default function Home() {
                 <motion.button
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.19, duration: 0.36 }}
                   onClick={() => openAirports("COK", "lounge")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-[var(--gold)]/12 relative active:scale-[0.95] transition-transform"
-                  style={{ background: "linear-gradient(155deg, rgba(201,168,76,0.08) 0%, #0a0805 100%)" }}
+                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
                 >
+                  <img src="/airport_services_photos/prioraty%20lounge%20accesss.webp" alt="Lounge Access" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
                   <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #c9a84c, #e8c97a, transparent)" }} />
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 30% 25%, rgba(201,168,76,0.10), transparent 60%)" }} />
                   <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--gold)]/20 mb-auto" style={{ backgroundColor: "rgba(201,168,76,0.10)" }}>
-                      <svg className="w-4 h-4 text-[var(--gold-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(201,168,76,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-1">Lounge Access</p>
-                      <p className="text-[9px] font-mono text-white/30">CIAL · CCJ · TRV</p>
+                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Lounge Access</p>
+                      <p className="text-[9px] font-mono text-white/55">CIAL · CCJ · TRV</p>
                     </div>
                   </div>
                 </motion.button>
@@ -529,7 +590,14 @@ export default function Home() {
             highlightService={airportsNav?.service}
           />
         )}
-        {activeTab === "Community" && <CommunityTab />}
+        {activeTab === "Community" && (
+          <CommunityTab
+            onOpenEvents={() => setActiveTab("Events")}
+            onOpenBenefits={() => setActiveTab("Benefits")}
+          />
+        )}
+        {activeTab === "Events" && <EventsScreen onBack={() => setActiveTab("Community")} />}
+        {activeTab === "Benefits" && <BenefitsScreen onBack={() => setActiveTab("Community")} />}
         {activeTab === "Portfolio" && <PortfolioScreen onBack={() => setActiveTab("Home")} />}
 
         <ProfileDrawer
