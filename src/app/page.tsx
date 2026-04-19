@@ -1,18 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/Badge";
 import {
   exploreProjects,
-  hotProjects,
   featuredItems,
-  portfolioInvestments,
   userPortfolio,
   userRewards,
   homePerks,
   type Item,
 } from "@/lib/mock-data";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { CommunityTab } from "@/components/CommunityTab";
 import { EventsScreen } from "@/components/EventsScreen";
@@ -24,6 +22,7 @@ import { ProfileDrawer } from "@/components/ProfileDrawer";
 import { PortfolioScreen } from "@/components/PortfolioScreen";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { LaunchAnimation } from "@/components/LaunchAnimation";
+import { InboxScreen } from "@/components/InboxScreen";
 
 function fmt(n: number) {
   if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
@@ -37,27 +36,14 @@ export default function Home() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [drawerType, setDrawerType] = useState<"event" | "project">("project");
-  const [activeOppsIndex, setActiveOppsIndex] = useState(0);
-  const [activeInvIndex, setActiveInvIndex] = useState(0);
   const [airportsNav, setAirportsNav] = useState<{ airport?: string; service?: string } | null>(null);
-  const oppsScrollRef = useRef<HTMLDivElement>(null);
+  const [activeOpenProjectIndex, setActiveOpenProjectIndex] = useState(0);
+  const openProjectsList = exploreProjects.filter(p => !p.isLocked); // prioritize open ones
 
   const openAirports = (airport?: string, service?: string) => {
     setAirportsNav({ airport, service });
     setActiveTab("Airports");
   };
-
-  // Auto-advance opportunities every 3.5s
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveOppsIndex(prev => {
-        const next = (prev + 1) % exploreProjects.length;
-        oppsScrollRef.current?.scrollTo({ left: next * (oppsScrollRef.current.offsetWidth), behavior: "smooth" });
-        return next;
-      });
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
 
   const open = (item: Item, type: "event" | "project") => {
     setSelectedItem(item);
@@ -70,7 +56,17 @@ export default function Home() {
     return () => clearTimeout(t);
   }, []);
 
-  const isSubScreen = ["Portfolio", "Airports", "Events", "Benefits"].includes(activeTab);
+  // Auto-switch Open Projects
+  useEffect(() => {
+    if (activeTab === "Home") {
+      const interval = setInterval(() => {
+        setActiveOpenProjectIndex(prev => (prev + 1) % openProjectsList.length);
+      }, 4500);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, openProjectsList.length]);
+
+  const isSubScreen = ["Portfolio", "Airports", "Events", "Benefits", "Inbox"].includes(activeTab);
 
   const getScreenTitle = () => {
     switch (activeTab) {
@@ -78,6 +74,7 @@ export default function Home() {
       case "Airports": return "Airport Services";
       case "Events": return "Events";
       case "Benefits": return "Member Privileges";
+      case "Inbox": return "Inbox";
       default: return "";
     }
   };
@@ -86,6 +83,7 @@ export default function Home() {
     if (activeTab === "Airports") setActiveTab("Travel");
     else if (activeTab === "Events" || activeTab === "Benefits") setActiveTab("Community");
     else if (activeTab === "Portfolio") setActiveTab("Home");
+    else if (activeTab === "Inbox") setActiveTab("Home");
     else setActiveTab("Home");
   };
 
@@ -114,19 +112,23 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 w-full"
+                className="flex items-center gap-4 w-full"
               >
                 <button
                   onClick={handleBack}
-                  className="w-8 h-8 rounded-full bg-white/6 border border-white/8 flex items-center justify-center active:scale-90 transition-transform shrink-0"
+                  className="w-10 h-10 rounded-full bg-white/6 border border-white/8 flex items-center justify-center active:scale-90 transition-transform shrink-0"
                 >
-                  <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <svg className="w-5 h-5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                   </svg>
                 </button>
-                <h1 className="text-[18px] font-bold text-[var(--c-text-h)] tracking-tight truncate">
-                  {getScreenTitle()}
-                </h1>
+                <span className="text-[20px] font-display font-medium text-[var(--gold-text)]/90 tracking-tight leading-none truncate">
+                  {activeTab === "Portfolio" && "My Portfolio"}
+                  {activeTab === "Airports" && "Airport Services"}
+                  {activeTab === "Events" && "Events"}
+                  {activeTab === "Benefits" && "Privileges"}
+                  {activeTab === "Inbox" && "Inbox"}
+                </span>
               </motion.div>
             ) : (
               <motion.div
@@ -139,24 +141,33 @@ export default function Home() {
           </div>
 
           {!isSubScreen && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2.5 shrink-0"
-            >
-              <div className="flex items-center gap-1.5 bg-[var(--gold)]/10 border border-[var(--gold)]/25 rounded-full px-3 py-1.5">
-                <svg className="w-3 h-3 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Inbox / Messages button — always visible on main tabs */}
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => setActiveTab("Inbox")}
+                className="relative w-9 h-9 flex items-center justify-center active:scale-90 transition-transform"
+              >
+                <svg className="w-4.5 h-4.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z" />
                 </svg>
-                <span className="text-[11px] font-mono font-bold text-[var(--gold-text)]">{userRewards.points.toLocaleString()}</span>
-              </div>
-              <button
+                {/* Unread badge */}
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[var(--gold)] flex items-center justify-center text-[8px] font-black text-black leading-none">
+                  3
+                </span>
+              </motion.button>
+
+              {/* Profile avatar — only on main screens */}
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
                 onClick={() => setIsProfileOpen(true)}
                 className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--gold)] to-amber-700 border-2 border-[var(--gold)]/60 flex items-center justify-center text-black font-bold text-[12px] shadow-[0_0_15px_rgba(251,191,36,0.25)] active:scale-90 transition-transform"
               >
                 FA
-              </button>
-            </motion.div>
+              </motion.button>
+            </div>
           )}
 
           {/* Optional blur overlay inside header for content but not background if needed, 
@@ -209,7 +220,7 @@ export default function Home() {
                     </button>
                   </div>
                   <div className="flex items-end gap-3 mb-1">
-                    <h1 className="text-[40px] font-bold text-[var(--c-text-h)] tracking-tight leading-none">{fmt(userPortfolio.currentValue)}</h1>
+                    <h1 className="text-[40px] font-display font-medium text-[var(--c-text-h)] tracking-tight leading-none">{fmt(userPortfolio.currentValue)}</h1>
                     <div className="flex items-center gap-1 mb-2 bg-emerald-400/10 px-2.5 py-1 rounded-full border border-emerald-400/20">
                       <svg className="w-2.5 h-2.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
@@ -237,253 +248,218 @@ export default function Home() {
               </motion.div>
             </section>
 
-            {/* ── 2 & 3. Investments + Opportunities ── */}
-            <section className="mb-6 px-5">
-              <div className="flex gap-2.5">
+            {/* ── 2. Open Projects ── */}
+            <section className="relative mb-6 pt-5 pb-4">
+              {/* Lighter Gradient for Entire Section Background */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#1a140a]/40 via-[#120e06]/20 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10 flex justify-center mb-5">
+                <button 
+                  onClick={() => setActiveTab("Projects")} 
+                  className="group flex items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <h2 className="text-[10px] font-display font-medium text-[var(--gold-text)]/60 tracking-[0.3em] uppercase">
+                    Open Projects
+                    <span className="inline-block ml-1.5 opacity-60 group-active:translate-x-1 transition-transform">&gt;</span>
+                  </h2>
+                </button>
+              </div>
 
-                {/* ── Left: My Investments ── */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline justify-between mb-2.5">
-                    <p className="text-[11px] font-bold text-[var(--c-text-h)] tracking-tight">Investments</p>
-                  </div>
+              <div className="mx-auto w-[82%] h-[210px] relative perspective-[1000px]">
+                {openProjectsList.map((project, i) => {
+                  const diff = (i - activeOpenProjectIndex + openProjectsList.length) % openProjectsList.length;
+                  let position = 0;
+                  if (diff === 1) position = 1; // right side
+                  else if (diff === openProjectsList.length - 1) position = -1; // left side
+                  else if (diff !== 0) position = 2; // hidden
 
-                  {/* Cards */}
-                  <div
-                    className="flex overflow-x-auto scrollbar-none snap-x snap-mandatory"
-                    onScroll={e => {
-                      const el = e.currentTarget;
-                      const idx = Math.round(el.scrollLeft / el.offsetWidth);
-                      if (idx !== activeInvIndex) setActiveInvIndex(idx);
-                    }}
-                  >
-                    {portfolioInvestments.map((inv, i) => {
-                      const project = hotProjects.find(p => p.id === inv.projectId);
-                      const progress = project?.raised && project?.target ? Math.round((project.raised / project.target) * 100) : 0;
-                      const gain = inv.currentValue - inv.invested;
-                      return (
-                        <motion.div
-                          key={inv.projectId}
-                          initial={{ opacity: 0, x: 12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.08, duration: 0.36 }}
-                          className="w-full shrink-0 snap-center"
-                        >
-                          <button
-                            onClick={() => project && open(project, "project")}
-                            className="w-full h-[190px] rounded-[20px] overflow-hidden border border-white/8 bg-[#0f0c06] relative active:scale-[0.97] transition-transform block"
-                          >
-                            {project?.image && <div className="absolute inset-0 bg-cover bg-center opacity-[0.20]" style={{ backgroundImage: `url("${project.image}")` }} />}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#080604] via-[#0a0805]/85 to-transparent" />
-                            <div className="relative z-10 p-3.5 flex flex-col h-full">
-                              {/* IRR pill */}
-                              <div className="self-start rounded-full px-2 py-0.5 border" style={{ backgroundColor: `${inv.color}18`, borderColor: `${inv.color}35` }}>
-                                <span className="text-[9px] font-bold" style={{ color: inv.color }}>{inv.irr}% IRR</span>
-                              </div>
-                              <div className="mt-auto text-left">
-                                <p className="text-[12px] font-bold text-white leading-tight mb-0.5">{inv.shortTitle}</p>
-                                <p className="text-[9px] font-mono text-white/32 mb-1">{fmt(inv.invested)}</p>
-                                <p className="text-[12px] font-bold mb-2" style={{ color: inv.color }}>+{fmt(gain)}</p>
-                                <div className="w-full h-[2px] rounded-full bg-white/10 overflow-hidden">
-                                  <div className="h-full rounded-full" style={{ width: `${progress}%`, backgroundColor: inv.color }} />
-                                </div>
-                                <p className="text-[7px] font-mono text-white/18 mt-1">{progress}% project funded</p>
-                              </div>
-                            </div>
-                          </button>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Dots */}
-                  <div className="flex justify-center gap-1.5 mt-2">
-                    {portfolioInvestments.map((_, i) => (
-                      <div key={i} className={`h-[3px] rounded-full transition-all duration-300 ${i === activeInvIndex ? "w-4 bg-[var(--gold)]" : "w-[3px] bg-white/18"}`} />
-                    ))}
-                  </div>
-
-                  {/* Manage Link */}
-                  <div className="flex justify-center mt-3">
-                    <button 
-                      onClick={() => setActiveTab("Portfolio")}
-                      className="text-[9px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]"
+                  const isVisible = Math.abs(position) <= 1;
+                  const isFront = position === 0;
+                  
+                  return (
+                    <motion.div
+                      key={project.id}
+                      initial={false}
+                      animate={{
+                        zIndex: isFront ? 10 : 5,
+                        opacity: isVisible ? (isFront ? 1 : 0.4) : 0,
+                        scale: isFront ? 1 : 0.86,
+                        x: isVisible ? position * 45 : position * 100,
+                        y: isFront ? 0 : 6,
+                      }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      drag={isFront ? "x" : false}
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.8}
+                      onDragEnd={(e, { offset: dragOffset, velocity }) => {
+                        const swipe = dragOffset.x;
+                        if (swipe < -50 || velocity.x < -300) {
+                          // Swipe left - next
+                          setActiveOpenProjectIndex((prev) => (prev + 1) % openProjectsList.length);
+                        } else if (swipe > 50 || velocity.x > 300) {
+                          // Swipe right - prev
+                          setActiveOpenProjectIndex((prev) => (prev - 1 + openProjectsList.length) % openProjectsList.length);
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full rounded-[4px] border border-[var(--gold)]/20 bg-gradient-to-br from-[#181208] to-[#0a0805] shadow-xl"
+                      style={{ transformOrigin: "center" }}
                     >
-                      manage →
-                    </button>
-                  </div>
-                </div>
-
-                {/* ── Right: New Opportunities ── */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline justify-between mb-2.5">
-                    <p className="text-[11px] font-bold text-[var(--c-text-h)] tracking-tight">Opportunities</p>
-                  </div>
-
-                  {/* Cards */}
-                  <div
-                    ref={oppsScrollRef}
-                    className="flex overflow-x-auto scrollbar-none snap-x snap-mandatory"
-                    onScroll={e => {
-                      const el = e.currentTarget;
-                      const idx = Math.round(el.scrollLeft / el.offsetWidth);
-                      if (idx !== activeOppsIndex && idx < exploreProjects.length) setActiveOppsIndex(idx);
-                    }}
-                  >
-                    {exploreProjects.map((item, i) => {
-                      const fundedPct = item.raised && item.target ? Math.round((item.raised / item.target) * 100) : 0;
-                      return (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, x: 12 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.08, duration: 0.36 }}
-                          className="w-full shrink-0 snap-center"
+                      {/* NEW sticker — first project only, overflows card boundary */}
+                      {i === 0 && (
+                        <div
+                          className="absolute -top-3.5 -right-2 z-30 rotate-6 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-black rounded-sm shadow-lg"
+                          style={{
+                            background: "linear-gradient(135deg, #f0d060, #c9a84c)",
+                            boxShadow: "0 2px 8px rgba(201,168,76,0.6), 0 1px 2px rgba(0,0,0,0.4)",
+                          }}
                         >
-                          <button
-                            onClick={() => open(item, "project")}
-                            className="w-full h-[190px] rounded-[20px] overflow-hidden border border-white/8 relative active:scale-[0.97] transition-transform block bg-[#0f0c06]"
-                          >
-                            {item.gallery?.[0] && (
-                              <img src={item.gallery[0]} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
-                            )}
-                            <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(8,6,4,0.92) 100%)" }} />
+                          New
+                        </div>
+                      )}
+                      <div className="absolute inset-0 overflow-hidden rounded-[4px]">
+                      <button
+                        onClick={() => {
+                          if (isFront) open(project, "project");
+                        }}
+                        className={`w-full h-full block text-left transition-transform duration-300 ${isFront ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
+                      >
+                        {project.image && (
+                          <img 
+                            src={project.image} 
+                            alt={project.title} 
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-screen"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+                        
+                        <div className="absolute inset-0 p-4 flex flex-col justify-end">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            {project.badges.slice(0, 2).map((b) => (
+                              <Badge key={b} label={b} />
+                            ))}
+                          </div>
+                          
+                          <h3 className="text-[19px] font-display font-medium text-white tracking-tight leading-none mb-1">
+                            {project.title}
+                          </h3>
+                          
+                          <p className="text-[10.5px] text-white/50 line-clamp-1 mb-2.5 leading-snug">
+                            {project.description}
+                          </p>
 
-                            {/* IRR badge */}
-                            <div className="absolute top-3 right-3 bg-black/55 backdrop-blur-sm border border-emerald-400/30 rounded-lg px-2 py-1 text-right">
-                              <p className="text-[7px] font-mono text-white/35 uppercase tracking-widest leading-none mb-0.5">IRR</p>
-                              <p className="text-[15px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
+                          <div className="grid grid-cols-2 gap-3 border-t border-white/10 pt-2.5">
+                            <div>
+                              <p className="text-[7.5px] font-mono text-white/30 uppercase tracking-[0.2em] mb-0.5">Target IRR</p>
+                              <p className="text-[13px] font-bold text-emerald-400">{project.irr}%</p>
                             </div>
-
-                            <div className="absolute bottom-0 left-0 right-0 p-3.5">
-                              <p className="text-[12px] font-bold text-white leading-tight mb-1 line-clamp-1">{item.title}</p>
-                              {/* Progress */}
-                              <div className="w-full h-[2px] rounded-full bg-white/12 overflow-hidden mb-1">
-                                <div className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full" style={{ width: `${fundedPct}%` }} />
-                              </div>
-                              <p className="text-[7px] font-mono text-white/25">{fundedPct}% funded · ₹{item.target}Cr target</p>
+                            <div className="text-right">
+                              <p className="text-[7.5px] font-mono text-white/30 uppercase tracking-[0.2em] mb-0.5">Min Entry</p>
+                              <p className="text-[13px] font-bold text-white">{fmt(project.minInvestment || 0)}</p>
                             </div>
-                          </button>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Dots */}
-                  <div className="flex justify-center gap-1.5 mt-2">
-                    {exploreProjects.map((_, i) => (
-                      <div key={i} className={`h-[3px] rounded-full transition-all duration-300 ${i === activeOppsIndex ? "w-4 bg-[var(--gold)]" : "w-[3px] bg-white/18"}`} />
-                    ))}
-                  </div>
-
-                  {/* See All Link */}
-                  <div className="flex justify-center mt-3">
-                    <button 
-                      onClick={() => setActiveTab("Projects")}
-                      className="text-[9px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]"
-                    >
-                      see all →
-                    </button>
-                  </div>
-                </div>
-
+                          </div>
+                          
+                          {/* Static Investment Progress */}
+                          <div className="mt-2.5">
+                            <div className="flex justify-between items-end mb-1">
+                              <p className="text-[7.5px] font-mono text-white/40 uppercase tracking-[0.2em]">Funded</p>
+                              <p className="text-[8px] font-mono text-[var(--gold-text)] font-bold">{Math.round((project.raised || 0) / (project.target || 1) * 100)}%</p>
+                            </div>
+                            <div className="w-full h-[2px] bg-white/10 relative overflow-hidden rounded-full">
+                              <div 
+                                style={{ width: `${Math.round((project.raised || 0) / (project.target || 1) * 100)}%` }} 
+                                className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </section>
 
-            {/* ── 3.5. Airports & Flights ── */}
-            <section className="mb-6">
-              <div className="px-5 mb-3 flex justify-between items-baseline">
-                <div>
-                  <h2 className="text-[17px] font-bold text-[var(--c-text-h)] tracking-tight">Airports & Flights</h2>
-                  <p className="text-[10px] font-mono text-white/30 mt-0.5">Exclusive NRK travel services</p>
-                </div>
-                <button onClick={() => openAirports()} className="text-[9px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">explore →</button>
+            {/* ── 3. Services ── */}
+            <section className="mb-5 px-5">
+              <div className="flex justify-center mb-4">
+                <button 
+                  onClick={() => setActiveTab("Travel")} 
+                  className="group flex items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <h2 className="text-[10px] font-display font-medium text-[var(--gold-text)]/60 tracking-[0.3em] uppercase">
+                    Services
+                    <span className="inline-block ml-1.5 opacity-60 group-active:translate-x-1 transition-transform">&gt;</span>
+                  </h2>
+                </button>
               </div>
-              <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
-
-                {/* 1 — Concierge */}
-                <motion.button
-                  initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05, duration: 0.36 }}
-                  onClick={() => openAirports("COK", "concierge")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
-                >
-                  <img src="/airport_services_photos/Personal%20Concierge%20Service.webp" alt="Airport Concierge" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
-                  <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #3864b4, #5b8de8, transparent)" }} />
-                  <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(56,100,180,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { label: "Airport\nConcierge",  color: "#5b8de8", bg: "rgba(56,100,180,0.10)",  border: "rgba(91,141,232,0.18)",  action: () => openAirports("COK", "concierge"), icon: "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" },
+                  { label: "Priority\nPickup",    color: "#a8b840", bg: "rgba(107,117,37,0.10)",  border: "rgba(168,184,64,0.18)",  action: () => openAirports("COK", "pickup"),    icon: "M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" },
+                  { label: "Lounge\nAccess",      color: "#e8c97a", bg: "rgba(201,168,76,0.10)",  border: "rgba(232,201,122,0.18)", action: () => openAirports("COK", "lounge"),    icon: "M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" },
+                  { label: "In-Flight\nServices", color: "#818cf8", bg: "rgba(129,140,248,0.10)", border: "rgba(129,140,248,0.18)", action: () => setActiveTab("Travel"),            icon: "M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" },
+                  { label: "Hotels\n& Stays",     color: "#fb923c", bg: "rgba(251,146,60,0.10)",  border: "rgba(251,146,60,0.18)",  action: () => setActiveTab("Travel"),            icon: "M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" },
+                  { label: "Experiences\n& More", color: "#4ade80", bg: "rgba(74,222,128,0.08)",  border: "rgba(74,222,128,0.15)",  action: () => setActiveTab("Travel"),            icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" },
+                ] as const).map((svc, i) => (
+                  <motion.button
+                    key={svc.label}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.05, duration: 0.24 }}
+                    onClick={svc.action}
+                    className="flex flex-col items-center justify-center gap-2 py-4 rounded-[16px] border active:scale-95 transition-transform"
+                    style={{ backgroundColor: svc.bg, borderColor: svc.border }}
+                  >
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${svc.color}15` }}>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.7" style={{ color: svc.color }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d={svc.icon} />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Airport Concierge</p>
-                      <p className="text-[9px] font-mono text-white/55">COK · CCJ · TRV</p>
-                    </div>
-                  </div>
-                </motion.button>
-
-                {/* 2 — Priority Pickup */}
-                <motion.button
-                  initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.12, duration: 0.36 }}
-                  onClick={() => openAirports("COK", "pickup")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
-                >
-                  <img src="/airport_services_photos/Priority%20Pickup%20or%20Drop.webp" alt="Priority Pickup" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
-                  <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #6b7530, #a8b840, transparent)" }} />
-                  <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(107,117,37,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Priority Pickup</p>
-                      <p className="text-[9px] font-mono text-white/55">Chauffeur transfers</p>
-                    </div>
-                  </div>
-                </motion.button>
-
-                {/* 3 — Lounge Access */}
-                <motion.button
-                  initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.19, duration: 0.36 }}
-                  onClick={() => openAirports("COK", "lounge")}
-                  className="shrink-0 w-[155px] h-[155px] rounded-[22px] overflow-hidden border border-white/8 relative active:scale-[0.95] transition-transform"
-                >
-                  <img src="/airport_services_photos/prioraty%20lounge%20accesss.webp" alt="Lounge Access" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.72) 100%)" }} />
-                  <div className="absolute top-0 left-0 right-0 h-[2.5px]" style={{ background: "linear-gradient(90deg, #c9a84c, #e8c97a, transparent)" }} />
-                  <div className="relative z-10 p-4 flex flex-col h-full">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-auto backdrop-blur-sm" style={{ backgroundColor: "rgba(201,168,76,0.55)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-[13px] font-bold text-white leading-tight mb-0.5">Lounge Access</p>
-                      <p className="text-[9px] font-mono text-white/55">CIAL · CCJ · TRV</p>
-                    </div>
-                  </div>
-                </motion.button>
-
+                    <p className="text-[10px] font-semibold text-white/65 text-center leading-tight whitespace-pre-line">{svc.label}</p>
+                  </motion.button>
+                ))}
               </div>
             </section>
 
             {/* ── 4. Member Perks ── */}
-            <section className="mb-6">
-              <div className="px-5 mb-3.5 flex justify-between items-center">
+            <section className="mb-6 mt-4 overflow-hidden relative"
+              style={{
+                background: "linear-gradient(150deg, #1c1205 0%, #130e04 50%, #0a0805 100%)",
+                boxShadow: "0 0 60px rgba(201,168,76,0.08)",
+                borderTop: "1px solid rgba(201,168,76,0.15)",
+                borderBottom: "1px solid rgba(201,168,76,0.15)",
+              }}
+            >
+              {/* Ambient gold glow */}
+              <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 100% 60% at 50% 0%, rgba(201,168,76,0.10), transparent 65%)" }} />
+
+              {/* Header */}
+              <div className="relative z-10 flex items-center justify-between px-5 pt-5 pb-4">
                 <div>
-                  <h2 className="text-[17px] font-bold text-[var(--c-text-h)] tracking-tight">Member Perks</h2>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <svg className="w-3 h-3 text-[var(--gold-text)]/60" viewBox="0 0 16 16" fill="currentColor">
+                  <p className="text-[9px] font-mono text-[var(--gold-text)]/45 uppercase tracking-[0.28em] mb-1">Exclusive Access</p>
+                  <h2 className="text-[18px] font-bold text-[var(--c-text-h)] tracking-tight">Member Perks</h2>
+                </div>
+                {/* Glowing GOLD tier badge */}
+                <button onClick={() => setActiveTab("Community")} className="active:scale-95 transition-transform">
+                  <div
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(201,168,76,0.25) 0%, rgba(232,201,122,0.15) 100%)",
+                      border: "1px solid rgba(201,168,76,0.45)",
+                      boxShadow: "0 0 12px rgba(201,168,76,0.35), inset 0 1px 0 rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <svg className="w-3 h-3 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
                       <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
                     </svg>
-                    <span className="text-[11px] font-mono text-[var(--gold-text)]/60">{userRewards.points.toLocaleString()} pts · {userRewards.tier}</span>
+                    <span className="text-[11px] font-black text-[var(--gold-text)] uppercase tracking-wider">{userRewards.tier}</span>
                   </div>
-                </div>
-                <button onClick={() => setActiveTab("Community")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">see all</button>
+                </button>
               </div>
-              <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
+
+              {/* Perk cards */}
+              <div className="relative z-10 flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
                 {homePerks.map((perk, i) => (
                   <motion.button
                     key={perk.id}
@@ -491,19 +467,26 @@ export default function Home() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.07, duration: 0.35 }}
                     onClick={() => setActiveTab("Community")}
-                    className="shrink-0 w-[148px] h-[158px] rounded-[22px] overflow-hidden relative border border-white/8 active:scale-[0.95] transition-transform flex flex-col"
-                    style={{ background: `linear-gradient(140deg,${perk.accentColor}55 0%,#0d0a06 100%)` }}
+                    className="shrink-0 w-[148px] h-[158px] rounded-[20px] overflow-hidden relative active:scale-[0.95] transition-transform flex flex-col"
+                    style={{
+                      background: `linear-gradient(140deg,${perk.accentColor}40 0%,rgba(15,10,4,0.9) 100%)`,
+                      border: "1px solid rgba(201,168,76,0.10)",
+                    }}
                   >
-                    <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 80% at 20% 20%,${perk.accentColor}35,transparent)` }} />
-                    {perk.isNew && <div className="absolute top-3 right-3 bg-[var(--gold)] text-black text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider z-10">New</div>}
+                    <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 80% at 20% 20%,${perk.accentColor}28,transparent)` }} />
+                    {perk.isNew && (
+                      <div className="absolute top-3 right-3 bg-[var(--gold)] text-black text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider z-10"
+                        style={{ boxShadow: "0 0 8px rgba(201,168,76,0.6)" }}
+                      >New</div>
+                    )}
                     <div className="relative z-10 p-4 flex flex-col h-full">
-                      <div className="w-10 h-8 rounded-lg flex items-center justify-center mb-auto border border-white/10" style={{ backgroundColor: `${perk.accentColor}60` }}>
-                        <span className="text-[9px] font-black text-white/90 tracking-tight">{perk.logoText}</span>
+                      <div className="w-10 h-8 rounded-lg flex items-center justify-center mb-auto" style={{ backgroundColor: `${perk.accentColor}50`, border: "1px solid rgba(201,168,76,0.15)" }}>
+                        <span className="text-[9px] font-black text-white/85 tracking-tight">{perk.logoText}</span>
                       </div>
                       <div>
                         <p className="text-[11px] font-bold text-white leading-snug mb-1 text-left">{perk.headline}</p>
-                        <p className="text-[10px] font-mono text-white/38 leading-tight mb-3 text-left">{perk.sub}</p>
-                        <div className="flex items-center gap-1 text-[var(--gold-text)]/50">
+                        <p className="text-[10px] font-mono text-white/35 leading-tight mb-3 text-left">{perk.sub}</p>
+                        <div className="flex items-center gap-1 text-[var(--gold-text)]/55">
                           <span className="text-[9px] font-mono">activate</span>
                           <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -514,18 +497,20 @@ export default function Home() {
                   </motion.button>
                 ))}
               </div>
+
               {/* Tier progress */}
-              <div className="mx-5 mt-3 rounded-2xl border border-[var(--gold)]/12 bg-[#0f0c06] p-4">
+              <div className="relative z-10 mx-5 mt-4 mb-5">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-mono text-[var(--gold-text)]/60 uppercase tracking-wider">{userRewards.tier}</span>
-                  <span className="text-[10px] font-mono text-white/25">{userRewards.pointsToNextTier.toLocaleString()} pts to {userRewards.nextTier}</span>
+                  <span className="text-[10px] font-mono text-[var(--gold-text)]/50 uppercase tracking-wider">{userRewards.tier}</span>
+                  <span className="text-[10px] font-mono text-white/22">{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
                 </div>
-                <div className="w-full h-[3px] rounded-full bg-white/8 overflow-hidden">
+                <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ backgroundColor: "rgba(201,168,76,0.10)" }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100)}%` }}
                     transition={{ duration: 1.4, ease: "easeOut", delay: 0.3 }}
-                    className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
+                    className="h-full rounded-full"
+                    style={{ background: "linear-gradient(90deg, #c9a84c, #f0d080)", boxShadow: "0 0 6px rgba(201,168,76,0.6)" }}
                   />
                 </div>
               </div>
@@ -533,9 +518,16 @@ export default function Home() {
 
             {/* ── 5. Upcoming Events ── */}
             <section className="mb-4">
-              <div className="px-5 mb-3.5 flex justify-between items-baseline">
-                <h2 className="text-[17px] font-bold text-[var(--c-text-h)] tracking-tight">Upcoming Events</h2>
-                <button onClick={() => setActiveTab("Community")} className="text-[11px] font-mono text-[var(--gold-text)]/40 active:text-[var(--gold-text)]">see all</button>
+              <div className="flex justify-center mb-4 px-5">
+                <button
+                  onClick={() => setActiveTab("Events")}
+                  className="group flex items-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <h2 className="text-[10px] font-display font-medium text-[var(--gold-text)]/60 tracking-[0.3em] uppercase">
+                    Upcoming Events
+                    <span className="inline-block ml-1.5 opacity-60 group-active:translate-x-1 transition-transform">&gt;</span>
+                  </h2>
+                </button>
               </div>
               <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
                 {featuredItems.map((event, i) => {
@@ -581,7 +573,7 @@ export default function Home() {
           </div>
         )}
 
-        {activeTab === "Projects" && <ProjectsTab />}
+        {activeTab === "Projects" && <ProjectsTab onOpenPortfolio={() => setActiveTab("Portfolio")} />}
         {activeTab === "Travel" && <TravelTab onOpenAirports={() => openAirports()} />}
         {activeTab === "Airports" && (
           <AirportsScreen
@@ -599,6 +591,7 @@ export default function Home() {
         {activeTab === "Events" && <EventsScreen onBack={() => setActiveTab("Community")} />}
         {activeTab === "Benefits" && <BenefitsScreen onBack={() => setActiveTab("Community")} />}
         {activeTab === "Portfolio" && <PortfolioScreen onBack={() => setActiveTab("Home")} />}
+        {activeTab === "Inbox" && <InboxScreen />}
 
         <ProfileDrawer
           isOpen={isProfileOpen}
@@ -606,7 +599,7 @@ export default function Home() {
           onOpenPortfolio={() => setActiveTab("Portfolio")}
         />
         <DetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} type={drawerType} />
-        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+        {!isSubScreen && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
       </div>
     </>
   );

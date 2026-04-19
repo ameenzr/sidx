@@ -24,6 +24,8 @@ export interface Item {
   structure?: string;
   exitRoute?: string;
   highlights?: string[];
+  deadline?: string;
+  isNew?: boolean;
 }
 
 // ─── Events ───────────────────────────────────────────────────────────────────
@@ -102,6 +104,8 @@ export const hotProjects: Item[] = [
       "/projects_gallery/luxury_hotel/partner logos/Screenshot 2026-04-02 222446.png",
     ],
     tenure: "5 Years",
+    deadline: "30 Apr 2026",
+    isNew: true,
     structure: "Revenue Share",
     exitRoute: "Buyback or secondary sale",
     highlights: [
@@ -170,6 +174,8 @@ export const hotProjects: Item[] = [
       "/projects_gallery/skin_care/partner logos/olay logo.png",
     ],
     tenure: "7 Years",
+    deadline: "15 May 2026",
+    isNew: true,
     structure: "Equity + Profit Share",
     exitRoute: "Strategic acquisition or franchise buyout",
     highlights: [
@@ -203,6 +209,7 @@ export const hotProjects: Item[] = [
       "/projects_gallery/luxury_hotel/partner logos/Screenshot 2026-04-02 222530.png",
     ],
     tenure: "6 Years",
+    deadline: "10 May 2026",
     structure: "Revenue Share (Venue Operations)",
     exitRoute: "REIT listing or promoter buyback",
     highlights: [

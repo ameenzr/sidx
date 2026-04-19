@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { useState } from "react";
 import { userRewards } from "@/lib/mock-data";
 
@@ -129,61 +129,141 @@ export type { BenefitItem };
 const CATEGORY_FILTERS = ["All", "Investment", "Lifestyle", "Travel", "Finance"] as const;
 
 function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onClose: () => void }) {
+  const y = useMotionValue(0);
+  const bgOpacity = useTransform(y, [0, 300], [1, 0]);
+
+  const handleDragEnd = (_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
+    if (info.offset.y > 120 || info.velocity.y > 500) onClose();
+    else animate(y, 0, { type: "spring", stiffness: 400, damping: 30 });
+  };
+
   return (
     <AnimatePresence>
       {benefit && (
         <>
-          <motion.div key="bd" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={onClose} className="fixed inset-0 z-[200] bg-black/75 backdrop-blur-sm" />
-          <motion.div key="bdr"
-            initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[210] bg-[var(--c-card)] rounded-t-[28px] overflow-hidden max-h-[88vh] flex flex-col shadow-[0_-20px_80px_rgba(0,0,0,0.8)]"
+          {/* Backdrop */}
+          <motion.div
+            key="bd"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ opacity: bgOpacity }}
+            onClick={onClose}
+            className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-xl"
+          />
+
+          {/* Drawer */}
+          <motion.div
+            key="bdr"
+            style={{ y }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.3 }}
+            onDragEnd={handleDragEnd}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 32, stiffness: 260, mass: 0.8 }}
+            className="fixed inset-x-0 bottom-0 top-[10vh] z-[210] bg-[var(--c-card)] rounded-t-[28px] flex flex-col shadow-[0_-30px_100px_rgba(0,0,0,0.9)] overflow-hidden touch-none"
           >
-            <div className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0 border-b border-white/5">
-              <button onClick={onClose} className="flex items-center gap-2 text-white/50 hover:text-white/90 transition-colors active:scale-95 group">
-                <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                </svg>
-                <span className="text-[12px] font-mono font-bold uppercase tracking-wider">Back</span>
-              </button>
-              <div className="w-8 h-[3px] bg-white/15 rounded-full" />
-              <div className="w-16" />
+            {/* Drag pill */}
+            <div className="absolute top-2.5 inset-x-0 flex justify-center z-40 pointer-events-none">
+              <div className="w-9 h-[3.5px] bg-white/20 rounded-full" />
             </div>
-            <div className="overflow-y-auto scrollbar-none px-6 pb-32 pt-5">
-              <div className="flex items-center gap-4 mb-6">
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shrink-0"
-                  style={{ backgroundColor: `${benefit.accentColor}50` }}
-                >
-                  <span className="text-[13px] font-black text-white tracking-tight">{benefit.logoText}</span>
+
+            {/* Back button */}
+            <motion.button
+              onClick={onClose}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.18, type: "spring", stiffness: 300 }}
+              className="absolute top-5 left-4 z-40 flex items-center gap-1.5 bg-black/45 backdrop-blur-md border border-white/12 rounded-full pl-2 pr-3 py-1.5 active:scale-95 transition-transform"
+            >
+              <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              <span className="text-[12px] font-semibold text-white/80">Back</span>
+            </motion.button>
+
+            <div className="overflow-y-auto scrollbar-none flex-1 touch-auto">
+              {/* Colored hero band */}
+              <div
+                className="relative h-[140px] shrink-0 flex items-end pb-5 px-5"
+                style={{ background: `linear-gradient(135deg, ${benefit.accentColor}30 0%, ${benefit.accentColor}10 60%, transparent 100%)` }}
+              >
+                <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 100% at 0% 50%, ${benefit.accentColor}25, transparent)` }} />
+                {/* Logo badge */}
+                <div className="absolute top-5 right-5">
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10"
+                    style={{ backgroundColor: `${benefit.accentColor}55` }}
+                  >
+                    <span className="text-[13px] font-black text-white tracking-tight">{benefit.logoText}</span>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[11px] font-mono text-white/35 uppercase tracking-wider mb-0.5">{benefit.partner}</p>
-                  <h2 className="text-[20px] font-bold text-[var(--c-text-h)] tracking-tight leading-tight">{benefit.title}</h2>
+                {/* Title block at bottom of hero */}
+                <div className="relative z-10">
+                  <p className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em] mb-1">{benefit.partner}</p>
+                  <h2 className="text-[22px] font-bold text-white tracking-tight leading-tight">{benefit.title}</h2>
                   {benefit.isActive && (
-                    <div className="flex items-center gap-1 mt-1">
+                    <div className="flex items-center gap-1.5 mt-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      <span className="text-[10px] font-mono text-emerald-400">Active on your account</span>
+                      <span className="text-[11px] font-mono text-emerald-400">Active on your account</span>
                     </div>
                   )}
                 </div>
               </div>
-              <p className="text-[14px] text-white/55 leading-relaxed mb-7">{benefit.detail}</p>
-              <div className="bg-white/[0.03] rounded-2xl border border-white/6 p-5 mb-6">
-                <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-4">How to Redeem</p>
-                <ol className="flex flex-col gap-3">
-                  {benefit.howToRedeem.map((step, i) => (
-                    <li key={i} className="flex gap-3 items-start">
-                      <span className="w-5 h-5 shrink-0 rounded-full bg-[var(--gold)]/15 border border-[var(--gold)]/25 flex items-center justify-center text-[10px] font-mono font-bold text-[var(--gold-text)]">{i + 1}</span>
-                      <span className="text-[13px] text-white/55 leading-relaxed">{step}</span>
-                    </li>
-                  ))}
-                </ol>
+
+              <div className="px-5 pt-5 pb-32">
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.18 }}
+                  className="text-[14px] text-white/55 leading-relaxed mb-6"
+                >
+                  {benefit.detail}
+                </motion.p>
+
+                {/* How to Redeem */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.22 }}
+                  className="rounded-2xl border border-white/8 bg-white/[0.03] overflow-hidden mb-7"
+                >
+                  <p className="text-[10px] font-mono text-white/25 uppercase tracking-[0.2em] px-4 pt-4 pb-3 border-b border-white/6">
+                    How to Redeem
+                  </p>
+                  <div className="px-4 py-4 flex flex-col gap-4">
+                    {benefit.howToRedeem.map((step, i) => (
+                      <div key={i} className="flex gap-3 items-start">
+                        <span
+                          className="w-5 h-5 shrink-0 rounded-full flex items-center justify-center text-[10px] font-mono font-bold"
+                          style={{ backgroundColor: `${benefit.accentColor}20`, color: benefit.accentColor, border: `1px solid ${benefit.accentColor}35` }}
+                        >
+                          {i + 1}
+                        </span>
+                        <span className="text-[13px] text-white/60 leading-relaxed">{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* CTA */}
+                <motion.button
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.26 }}
+                  className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-[0.98] transition-transform"
+                >
+                  {benefit.isActive ? "View Details" : "Activate Benefit"}
+                </motion.button>
+
+                <p className="text-center text-[10px] font-mono text-white/12 mt-5 tracking-wider">
+                  SWIPE DOWN TO DISMISS
+                </p>
               </div>
-              <button className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-95 transition-transform">
-                {benefit.isActive ? "View Details" : "Activate Benefit"}
-              </button>
             </div>
           </motion.div>
         </>
@@ -209,7 +289,7 @@ export function BenefitsScreen({ onBack }: BenefitsScreenProps) {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen pt-[56px] pb-32 text-white relative">
+      <div className="flex flex-col min-h-screen pt-[56px] pb-24 text-white relative">
 
         {/* Background */}
         <div className="fixed inset-0 pointer-events-none z-0">
@@ -217,9 +297,8 @@ export function BenefitsScreen({ onBack }: BenefitsScreenProps) {
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 85% 10%, rgba(180,130,40,0.08), transparent 55%)" }} />
         </div>
 
-        <div className="pt-4" />
 
-        {/* Tier card */}
+
         <div className="px-5 mb-5 relative z-10">
           <div
             className="relative rounded-[20px] overflow-hidden border border-[var(--gold)]/20 p-4"
@@ -238,8 +317,8 @@ export function BenefitsScreen({ onBack }: BenefitsScreenProps) {
               </div>
               <div className="flex-1">
                 <div className="flex justify-between text-[9px] font-mono text-white/30 mb-1.5">
-                  <span>{userRewards.points.toLocaleString()} pts</span>
-                  <span>{userRewards.pointsToNextTier.toLocaleString()} to {userRewards.nextTier}</span>
+                  <span>{userRewards.points.toLocaleString("en-US")} pts</span>
+                  <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
                 </div>
                 <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
                   <motion.div

@@ -1,11 +1,11 @@
 "use client";
 
-import { exploreProjects } from "@/lib/mock-data";
-import { Badge } from "@/components/ui/Badge";
+import { exploreProjects, portfolioInvestments } from "@/lib/mock-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { type Item } from "@/lib/mock-data";
+import { TabHeader } from "@/components/ui/TabHeader";
 
 function fmt(n: number) {
   if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
@@ -13,166 +13,166 @@ function fmt(n: number) {
   return `₹${(n / 1000).toFixed(0)}K`;
 }
 
-const FILTERS = ["All", "Tourism", "Residential", "Healthcare", "Commercial"];
+const FILTERS = ["Open", "All"];
 
-const filterMap: Record<string, string[]> = {
-  "Tourism": ["agri-tourism", "eco", "tourism", "flagship"],
-  "Residential": ["residential", "premium", "villa"],
-  "Healthcare": ["healthcare"],
-  "Commercial": ["commercial", "convention", "retail"],
-};
+const investedIds = new Set(portfolioInvestments.map(p => p.projectId));
 
-export function ProjectsTab() {
+interface Props { onOpenPortfolio: () => void; }
+
+export function ProjectsTab({ onOpenPortfolio }: Props) {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("Open");
 
-  const filtered = activeFilter === "All"
-    ? exploreProjects
-    : exploreProjects.filter(p =>
-        p.badges.some(b =>
-          filterMap[activeFilter]?.some(k => b.toLowerCase().includes(k))
-        ) || p.title.toLowerCase().includes(activeFilter.toLowerCase())
-      );
+  const list =
+    activeFilter === "Open" ? exploreProjects.filter(p => !investedIds.has(p.id)) :
+    exploreProjects;
 
-  const avgIRR = (exploreProjects.reduce((s, p) => s + (p.irr || 0), 0) / exploreProjects.length).toFixed(1);
-  const totalTarget = exploreProjects.reduce((s, p) => s + (p.target || 0), 0);
+  const openCount = exploreProjects.filter(p => !investedIds.has(p.id)).length;
 
   return (
     <>
-      <div className="flex flex-col min-h-screen pt-20 pb-[110px] text-white">
+      <div className="flex flex-col min-h-screen pt-4 pb-32 text-white">
 
-        {/* Header */}
-        <div className="px-6 mb-5">
-          <h1 className="text-[28px] font-bold text-[var(--c-text-h)] tracking-tight mb-1">Investment Deals</h1>
-          <p className="text-[12px] font-mono text-white/35">
-            ₹{totalTarget}Cr across {exploreProjects.length} active deals · avg {avgIRR}% IRR
-          </p>
+        {/* ── Header ── */}
+        <TabHeader title="Projects" subtitle={`${openCount} open`} />
+
+        {/* ── Portfolio button row ── */}
+        <div className="pt-3 pb-3">
+          <button
+            onClick={onOpenPortfolio}
+            className="w-full flex items-center justify-center gap-2 bg-[var(--gold)]/10 border border-[var(--gold)]/25 rounded-none py-2.5 active:bg-[var(--gold)]/18 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5 text-[var(--gold-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
+            </svg>
+            <span className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">My Portfolio</span>
+            <svg className="w-3 h-3 text-[var(--gold-text)]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </button>
         </div>
 
-        {/* Filter pills */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-none px-6 mb-5 pb-1">
+        {/* ── Filter pills ── */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-none px-5 pb-4">
           {FILTERS.map(f => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`shrink-0 px-4 py-2 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider transition-all duration-200 ${
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeFilter === f
-                  ? "bg-[var(--gold)] text-black shadow-[0_4px_16px_rgba(251,191,36,0.3)]"
-                  : "bg-white/6 text-white/45 border border-white/10 hover:bg-white/10"
+                  ? "bg-[var(--gold)] text-black"
+                  : "bg-white/5 text-white/40 border border-white/8"
               }`}
             >
-              {f}
+              {f === "Open" ? `Open · ${openCount}` : f}
             </button>
           ))}
         </div>
 
-        {/* Cards */}
-        <div className="flex flex-col gap-3.5 px-5">
+        {/* ── List ── */}
+        <div className="flex flex-col">
           <AnimatePresence mode="popLayout">
-            {filtered.map((item, idx) => {
+            {list.map((item, idx) => {
               const fundedPct = item.raised && item.target ? Math.round((item.raised / item.target) * 100) : 0;
               const isHot = item.badges.some(b => b.toLowerCase().includes("hot"));
-              const isClosing = fundedPct >= 70;
+              const isInvested = investedIds.has(item.id);
+              const isLast = idx === list.length - 1;
 
               return (
                 <motion.div
                   key={item.id}
                   layout
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ delay: idx * 0.08, duration: 0.38 }}
-                  onClick={() => setSelectedItem(item)}
-                  className="rounded-[20px] overflow-hidden border border-white/8 bg-[var(--c-card)] shadow-[0_8px_40px_rgba(0,0,0,0.5)] active:scale-[0.99] transition-transform cursor-pointer"
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: idx * 0.05, duration: 0.28 }}
+                  className="relative"
                 >
-                  {/* Image banner */}
-                  <div className="relative h-[160px] overflow-hidden">
-                    <img
-                      src={item.gallery?.[0] || item.image || ""}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
+                  <button
+                    onClick={() => setSelectedItem(item)}
+                    className="w-full text-left px-5 py-4 active:bg-white/3 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+
+                      {/* Left: title + meta */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <p className="text-[15px] font-semibold text-white/90 leading-snug">{item.title}</p>
+                          {item.isNew && (
+                            <span
+                              className="text-[8px] font-black uppercase tracking-wider text-black px-1.5 py-0.5 rounded-sm rotate-[-1deg] shrink-0"
+                              style={{
+                                background: "linear-gradient(135deg, #f0d060, #c9a84c)",
+                                boxShadow: "0 1px 4px rgba(201,168,76,0.5)",
+                              }}
+                            >New</span>
+                          )}
+                          {isInvested && (
+                            <span className="text-[8px] font-bold text-[var(--gold-text)] border border-[var(--gold)]/30 px-1.5 py-0.5 rounded-full shrink-0">Invested</span>
+                          )}
+                          {isHot && !isInvested && (
+                            <span className="text-[8px] font-bold text-orange-400 shrink-0 flex items-center gap-1">
+                              <span className="w-1 h-1 rounded-full bg-orange-400 inline-block" />Hot
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Meta line */}
+                        <p className="text-[10px] font-mono text-white/30 leading-snug">
+                          {[
+                            item.location?.split(",")[0],
+                            item.tenure,
+                            item.minInvestment ? `Min ${fmt(item.minInvestment)}` : null,
+                          ].filter(Boolean).join(" · ")}
+                        </p>
+
+                        {/* Deadline */}
+                        {item.deadline && (
+                          <p className="text-[9px] font-mono text-red-400/80 mt-1 flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse inline-block" />
+                            Closes {item.deadline}
+                          </p>
+                        )}
+
+                        {/* Progress bar */}
+                        {item.raised !== undefined && item.target !== undefined && (
+                          <div className="mt-2.5 flex items-center gap-2">
+                            <div className="flex-1 h-[2px] bg-white/8 rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${fundedPct}%` }}
+                                transition={{ duration: 1, ease: "easeOut", delay: idx * 0.07 + 0.1 }}
+                                className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
+                              />
+                            </div>
+                            <span className="text-[8px] font-mono text-white/30 shrink-0">{fundedPct}%</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: IRR */}
+                      <div className="text-right shrink-0">
+                        <p className="text-[22px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
+                        <p className="text-[7px] font-mono text-white/25 uppercase tracking-widest mt-0.5">IRR</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Fading divider */}
+                  {!isLast && (
+                    <div
+                      className="mx-5 h-px"
+                      style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.07) 70%, transparent 100%)" }}
                     />
-                    <div className="absolute inset-0 img-fade-overlay" />
-
-                    {/* IRR badge — top right */}
-                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-emerald-400/30 rounded-xl px-2.5 py-1.5 text-right">
-                      <p className="text-[7px] font-mono text-white/40 uppercase tracking-widest leading-none mb-0.5">IRR</p>
-                      <p className="text-[18px] font-bold text-emerald-400 leading-none">{item.irr}%</p>
-                    </div>
-
-                    {/* Status indicators — top left */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-1">
-                      {isHot && (
-                        <div className="flex items-center gap-1 bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm rounded-full px-2 py-0.5">
-                          <span className="w-1 h-1 rounded-full bg-orange-400" />
-                          <span className="text-[8px] font-bold text-orange-400 uppercase tracking-wider">Hot Deal</span>
-                        </div>
-                      )}
-                      {isClosing && (
-                        <div className="flex items-center gap-1 bg-red-600/20 border border-red-500/40 backdrop-blur-sm rounded-full px-2 py-0.5">
-                          <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse" />
-                          <span className="text-[8px] font-bold text-red-400 uppercase tracking-wider">Filling Fast</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Badges — bottom */}
-                    <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                      {item.badges.slice(0, 2).map((b, i) => <Badge key={i} label={b} />)}
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="px-4 pt-3.5 pb-4">
-                    <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <h3 className="text-[17px] font-bold text-white tracking-tight leading-tight">{item.title}</h3>
-                      {item.location && (
-                        <span className="text-[10px] font-mono text-[var(--gold-text)]/50 text-right shrink-0 mt-0.5 max-w-[40%] leading-tight">{item.location.split(",")[0]}</span>
-                      )}
-                    </div>
-
-                    {/* Stats row */}
-                    <div className="grid grid-cols-3 mb-3 rounded-xl border border-white/6 overflow-hidden bg-white/[0.02]">
-                      <div className="py-2 text-center">
-                        <p className="text-[14px] font-bold text-emerald-400">{item.irr}%</p>
-                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">IRR</p>
-                      </div>
-                      <div className="py-2 text-center border-x border-white/6">
-                        <p className="text-[14px] font-bold text-white/70">{fmt(item.minInvestment || 0)}</p>
-                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">Min.</p>
-                      </div>
-                      <div className="py-2 text-center">
-                        <p className="text-[14px] font-bold text-white/70">₹{item.target}Cr</p>
-                        <p className="text-[7px] font-mono text-white/28 uppercase tracking-wider">Target</p>
-                      </div>
-                    </div>
-
-                    {/* Funding progress */}
-                    {item.raised !== undefined && item.target !== undefined && (
-                      <div>
-                        <div className="flex justify-between text-[9px] font-mono text-white/30 mb-1">
-                          <span>₹{item.raised}Cr raised</span>
-                          <span className="text-[var(--gold-text)]/60">{fundedPct}% funded</span>
-                        </div>
-                        <div className="h-[3px] bg-white/8 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${fundedPct}%` }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: idx * 0.1 + 0.2 }}
-                            className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </motion.div>
               );
             })}
           </AnimatePresence>
 
-          {filtered.length === 0 && (
+          {list.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-white/25 font-mono text-[13px]">No deals in this category yet.</p>
+              <p className="text-white/22 font-mono text-[13px]">No projects in this category.</p>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Mono } from "next/font/google";
+import { DM_Sans, DM_Serif_Display, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
@@ -9,9 +9,15 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
 });
 
-const dmMono = DM_Mono({
+const dmSerifDisplay = DM_Serif_Display({
+  weight: ["400"],
+  variable: "--font-dm-serif-display",
+  subsets: ["latin"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
-  variable: "--font-dm-mono",
+  variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
 });
 
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${dmMono.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${dmSerifDisplay.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body data-testid="app-root-body" className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: "var(--c-base)", color: "var(--c-text-h)" }}>
         <ThemeProvider>

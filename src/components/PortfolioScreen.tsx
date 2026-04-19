@@ -25,7 +25,7 @@ export function PortfolioScreen({ onBack }: Props) {
   );
 
   return (
-    <div className="flex flex-col min-h-screen pt-0 pb-[110px] text-white relative">
+    <div className="flex flex-col min-h-screen pt-[56px] pb-24 text-white relative">
 
       {/* ── Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -38,7 +38,8 @@ export function PortfolioScreen({ onBack }: Props) {
       </div>
 
 
-      <div className="flex flex-col gap-5 px-5 pt-6 relative z-10">
+      <div className="flex flex-col gap-5 px-5 pt-4 relative z-10">
+
 
         {/* ── 1. Portfolio Hero Card (compact) ── */}
         <motion.div
@@ -69,7 +70,7 @@ export function PortfolioScreen({ onBack }: Props) {
             <div className="flex items-end justify-between mb-1">
               <div>
                 <p className="text-[9px] font-mono text-[var(--gold-text)]/40 uppercase tracking-[0.25em] mb-1.5">Portfolio Value</p>
-                <h2 className="text-[36px] font-bold tracking-tight leading-none" style={{ color: "var(--c-text-h)" }}>{fmt(userPortfolio.currentValue)}</h2>
+                <h2 className="text-[36px] font-display font-medium tracking-tight leading-none" style={{ color: "var(--c-text-h)" }}>{fmt(userPortfolio.currentValue)}</h2>
               </div>
               <div className="flex items-center gap-1 mb-1 bg-emerald-400/10 px-2.5 py-1 rounded-full border border-emerald-400/20">
                 <svg className="w-2.5 h-2.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
@@ -241,11 +242,11 @@ export function PortfolioScreen({ onBack }: Props) {
                   </svg>
                   <span className="text-[14px] font-bold text-[var(--gold-text)] tracking-wide">{userRewards.tier}</span>
                 </div>
-                <p className="text-[18px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString()}<span className="text-[9px] font-mono text-white/25 ml-1">pts</span></p>
+                <p className="text-[18px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString("en-US")}<span className="text-[9px] font-mono text-white/25 ml-1">pts</span></p>
               </div>
               <div className="flex justify-between text-[8px] font-mono text-white/22 mb-1.5">
                 <span>{userRewards.tier}</span>
-                <span>{userRewards.pointsToNextTier.toLocaleString()} to {userRewards.nextTier}</span>
+                <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
               </div>
               <div className="h-[2.5px] bg-white/8 rounded-full overflow-hidden">
                 <motion.div

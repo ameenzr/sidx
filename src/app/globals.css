@@ -172,7 +172,8 @@
   --radius-pill: var(--r-pill);
 
   --font-sans: var(--font-dm-sans);
-  --font-mono: var(--font-dm-mono);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-dm-serif-display);
 
   --color-white: var(--c-text-h);
   --color-black: var(--c-base);
@@ -223,6 +224,29 @@ body {
     radial-gradient(at 100% 50%, rgba(201, 168, 76, 0.03) 0px, transparent 40%);
   background-attachment: fixed;
   transition: background-color 0.35s ease;
+}
+
+/* ── Display / Hero typography — DM Serif Display ──────────────── */
+/*
+  DM Serif Display is applied to:
+  - Large financial hero numbers (portfolio value, IRR, etc.)
+  - Screen-level h1 headings in the navbar and sub-screens
+  - Section h2 headings on the home screen
+  These are targeted via the .font-display utility class.
+  All mono labels (tags, codes, timestamps) now use IBM Plex Mono.
+*/
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+/* Auto-apply to all h1 (screen titles inherit via className, but native h1/h2 get serif) */
+h1 {
+  font-family: var(--font-display), serif;
+  font-weight: 400;
+}
+h2, h3 {
+  font-family: var(--font-display), serif;
+  font-weight: 400;
 }
 
 /* Light theme body overrides — Atelier warm cream with rich radial gradients */

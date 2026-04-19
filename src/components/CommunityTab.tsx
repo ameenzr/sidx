@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { featuredItems, userRewards } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/Badge";
 import { benefits } from "@/components/BenefitsScreen";
+import { TabHeader } from "@/components/ui/TabHeader";
 
 interface CommunityTabProps {
   onOpenEvents: () => void;
@@ -23,13 +24,10 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
   const previewBenefits = benefits.slice(0, 4);
 
   return (
-    <div className="flex flex-col pt-20 pb-[110px] text-white">
+    <div className="flex flex-col pt-4 pb-[110px] text-white">
 
       {/* ── Header ── */}
-      <div className="px-6 mb-5">
-        <h1 className="text-[28px] font-bold text-[var(--c-text-h)] tracking-tight leading-none">Community</h1>
-        <p className="text-[11px] font-mono text-white/30 mt-1">Events · Privileges · Rewards</p>
-      </div>
+      <TabHeader title="Community" />
 
       {/* ── Tier status bar ── */}
       <div className="px-5 mb-6">
@@ -48,9 +46,9 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-[13px] font-bold text-[var(--gold-text)]">{userRewards.tier}</span>
-                  <span className="text-[10px] font-mono text-white/35">{userRewards.points.toLocaleString()} pts</span>
+                  <span className="text-[10px] font-mono text-white/35">{userRewards.points.toLocaleString("en-US")} pts</span>
                 </div>
-                <span className="text-[9px] font-mono text-white/25">{userRewards.pointsToNextTier.toLocaleString()} to {userRewards.nextTier}</span>
+                <span className="text-[9px] font-mono text-white/25">{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
               </div>
               <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
                 <motion.div
@@ -69,8 +67,8 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
       <div className="mb-6">
         <div className="px-5 flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-[15px] font-bold text-[var(--c-text-h)] tracking-tight">Upcoming Events</h2>
-            <p className="text-[9px] font-mono text-white/25 mt-0.5">{featuredItems.length} events · NRK members only</p>
+            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Upcoming Events</h2>
+
           </div>
           <button
             onClick={onOpenEvents}
@@ -154,8 +152,8 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
       <div className="mb-4">
         <div className="px-5 flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-[15px] font-bold text-[var(--c-text-h)] tracking-tight">Member Privileges</h2>
-            <p className="text-[9px] font-mono text-white/25 mt-0.5">{activeCount} active · {benefits.length} total</p>
+            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Member Privileges</h2>
+
           </div>
           <button
             onClick={onOpenBenefits}

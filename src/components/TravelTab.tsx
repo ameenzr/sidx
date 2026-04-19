@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { TabHeader } from "@/components/ui/TabHeader";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -166,16 +167,9 @@ function ServiceCardItem({ svc }: { svc: ServiceCard }) {
           {svc.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest">{svc.category}</span>
-            {svc.badge && (
-              <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${svc.accentColor}25`, color: svc.accentColor }}>
-                {svc.badge}
-              </span>
-            )}
-          </div>
-          <p className="text-[14px] font-bold text-white leading-snug">{svc.title}</p>
-          <p className="text-[10px] text-white/40 mt-0.5 leading-snug">{svc.subtitle}</p>
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
+          <p className="text-[16px] font-display font-bold text-white/90 tracking-tight leading-none">{svc.title}</p>
+        </div>
         </div>
         <svg
           className="shrink-0 w-4 h-4 text-white/25 mt-0.5 transition-transform duration-300"
@@ -201,22 +195,22 @@ function ServiceCardItem({ svc }: { svc: ServiceCard }) {
                 {svc.features.map((f, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <div className="w-1 h-1 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: `${svc.accentColor}90` }} />
-                    <span className="text-[11px] text-white/55 leading-relaxed">{f}</span>
+                    <span className="text-[10px] text-white/55 leading-relaxed">{f}</span>
                   </div>
                 ))}
               </div>
               {svc.destinations && (
                 <div className="flex flex-wrap gap-1.5 mb-3.5">
                   {svc.destinations.map(d => (
-                    <span key={d} className="text-[9px] font-mono px-2 py-0.5 rounded-full border"
+                    <span key={d} className="text-[8px] font-mono px-2 py-0.5 rounded-full border"
                       style={{ color: `${svc.accentColor}cc`, borderColor: `${svc.accentColor}30`, backgroundColor: `${svc.accentColor}10` }}
                     >{d}</span>
                   ))}
                 </div>
               )}
-              {svc.note && <p className="text-[9px] font-mono text-white/25 mb-3">{svc.note}</p>}
+              {svc.note && <p className="text-[8px] font-mono text-white/25 mb-3">{svc.note}</p>}
               <button
-                className="w-full py-2.5 rounded-[14px] text-[12px] font-bold tracking-wide transition-opacity active:opacity-75"
+                className="w-full py-2.5 rounded-[14px] text-[10px] font-bold tracking-wide transition-opacity active:opacity-75"
                 style={{ backgroundColor: `${svc.accentColor}18`, color: svc.accentColor, border: `1px solid ${svc.accentColor}35` }}
               >
                 {svc.cta} →
@@ -241,17 +235,7 @@ export function TravelTab({ onOpenAirports }: TravelTabProps) {
   return (
     <div className="flex flex-col w-full pb-32 pt-4">
       {/* ── Header ── */}
-      <div className="px-5 mb-5">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <p className="text-[11px] font-mono text-white/28 uppercase tracking-[0.18em] mb-1">Sid-X Travel</p>
-          <h1 className="text-[26px] font-bold text-[var(--c-text-h)] tracking-tight leading-tight">
-            Travel Services
-          </h1>
-          <p className="text-[12px] text-white/38 mt-1 leading-relaxed">
-            Exclusive travel solutions for Kerala NRIs — Gulf, UK, EU & beyond.
-          </p>
-        </motion.div>
-      </div>
+      <TabHeader title="Travel Services" />
 
       {/* ── Airport Services Button ── */}
       <motion.div
@@ -267,25 +251,15 @@ export function TravelTab({ onOpenAirports }: TravelTabProps) {
         >
           <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, #60a5fa, #c9a84c, #4ade80)" }} />
           <div className="flex items-center gap-4 p-4">
-            {/* Airport icons strip */}
-            <div className="flex -space-x-2 shrink-0">
-              {[
-                { code: "COK", color: "#60a5fa" },
-                { code: "DXB", color: "#f59e0b" },
-                { code: "CCJ", color: "#4ade80" },
-              ].map(a => (
-                <div
-                  key={a.code}
-                  className="w-9 h-9 rounded-xl flex items-center justify-center border text-[10px] font-black"
-                  style={{ borderColor: `${a.color}30`, backgroundColor: `${a.color}20`, color: a.color, zIndex: 1 }}
-                >
-                  {a.code}
-                </div>
-              ))}
+            {/* Single Airport icon */}
+            <div
+              className="w-10 h-10 rounded-2xl flex items-center justify-center border shrink-0"
+              style={{ borderColor: "rgba(96,165,250,0.3)", backgroundColor: "rgba(96,165,250,0.15)", color: "#60a5fa" }}
+            >
+              {Icon.plane}
             </div>
-            <div className="flex-1 text-left">
-              <p className="text-[14px] font-bold text-white">Airport Services</p>
-              <p className="text-[10px] text-white/35">Concierge, lounges, transfers & more</p>
+            <div className="flex-1 text-left flex flex-col justify-center">
+              <p className="text-[16px] font-display font-bold text-white/90 tracking-tight leading-none">Airport Services</p>
             </div>
             <svg className="w-5 h-5 text-white/25 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

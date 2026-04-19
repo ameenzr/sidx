@@ -126,7 +126,7 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
                     <p className="text-[8px] font-mono uppercase tracking-wider mt-0.5" style={{ color: "var(--c-text-muted)" }}>Returns</p>
                   </div>
                   <div className="py-3 px-2 text-center" style={{ backgroundColor: "var(--c-surface)" }}>
-                    <p className="text-[13px] font-bold" style={{ color: "var(--c-text-h)" }}>{userRewards.points.toLocaleString()}</p>
+                    <p className="text-[13px] font-bold" style={{ color: "var(--c-text-h)" }}>{userRewards.points.toLocaleString("en-US")}</p>
                     <p className="text-[8px] font-mono uppercase tracking-wider mt-0.5" style={{ color: "var(--c-text-muted)" }}>Points</p>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
                 {/* Tier progress */}
                 <div className="flex justify-between text-[9px] font-mono mb-1.5" style={{ color: "var(--c-text-dim)" }}>
                   <span>{userRewards.tier}</span>
-                  <span>{userRewards.pointsToNextTier.toLocaleString()} pts to {userRewards.nextTier}</span>
+                  <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} pts to {userRewards.nextTier}</span>
                 </div>
                 <div className="h-[2px] rounded-full overflow-hidden" style={{ backgroundColor: "var(--c-border)" }}>
                   <motion.div
@@ -199,7 +199,7 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
 
                     {/* Points Overlay */}
                     <div className="bg-black/40 backdrop-blur-md border border-[var(--gold)]/30 rounded-full px-2.5 py-1 flex items-baseline gap-1 shadow-lg">
-                       <span className="text-[14px] font-bold text-white leading-none">{userRewards.points.toLocaleString()}</span>
+                       <span className="text-[14px] font-bold text-white leading-none">{userRewards.points.toLocaleString("en-US")}</span>
                        <span className="text-[7px] font-mono uppercase text-[var(--gold-text)] leading-none">PTS</span>
                     </div>
                   </div>

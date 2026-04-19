@@ -233,12 +233,12 @@ export function BenefitsTab() {
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-mono text-white/30 uppercase tracking-wider mb-0.5">Points Balance</p>
-                  <p className="text-[22px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString()}</p>
+                  <p className="text-[22px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString("en-US")}</p>
                 </div>
               </div>
               <div className="flex justify-between text-[10px] font-mono text-white/30 mb-2">
                 <span>{userRewards.tier}</span>
-                <span>{userRewards.pointsToNextTier.toLocaleString()} pts to {userRewards.nextTier}</span>
+                <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} pts to {userRewards.nextTier}</span>
               </div>
               <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
                 <motion.div
