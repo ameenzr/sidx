@@ -298,7 +298,6 @@ export function BenefitsScreen({ onBack, onFeedback }: BenefitsScreenProps) {
     ? benefits
     : benefits.filter(b => b.category === activeCategory.toLowerCase());
 
-  const tierProgress = Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100);
   const activeCount = benefits.filter(b => b.isActive).length;
 
   return (
@@ -330,18 +329,8 @@ export function BenefitsScreen({ onBack, onFeedback }: BenefitsScreenProps) {
                 </div>
               </div>
               <div className="flex-1">
-                <div className="flex justify-between text-[9px] font-mono text-white/30 mb-1.5">
-                  <span>{userRewards.points.toLocaleString("en-US")} pts</span>
-                  <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
-                </div>
-                <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${tierProgress}%` }}
-                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.15 }}
-                    className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
-                  />
-                </div>
+                <p className="text-[10px] font-mono text-white/35 uppercase tracking-wider text-right">Active Status</p>
+                <p className="text-[11px] font-bold text-emerald-400 text-right">EXCLUSIVE ACCESS</p>
               </div>
             </div>
           </div>

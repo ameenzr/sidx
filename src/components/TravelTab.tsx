@@ -251,33 +251,57 @@ export function TravelTab({ onOpenAirports, onFeedback }: TravelTabProps) {
       {/* ── Header ── */}
       <TabHeader title="Travel Services" />
 
-      {/* ── Airport Services Button ── */}
+      {/* ── Airport Services (Featured Hero) ── */}
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08, duration: 0.35 }}
-        className="px-5 mb-6"
+        transition={{ delay: 0.08, duration: 0.45 }}
+        className="px-5 mb-8"
       >
         <button
           onClick={onOpenAirports}
-          className="w-full rounded-[20px] border border-white/10 overflow-hidden relative active:scale-[0.98] transition-transform"
-          style={{ background: "linear-gradient(135deg, rgba(96,165,250,0.08) 0%, rgba(201,168,76,0.06) 50%, rgba(74,222,128,0.05) 100%)" }}
+          className="w-full rounded-[28px] border border-white/12 overflow-hidden relative active:scale-[0.98] transition-all group shadow-2xl"
+          style={{ 
+            background: "linear-gradient(165deg, #1e293b 0%, #0f172a 100%)",
+            boxShadow: "0 20px 40px -20px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02)"
+          }}
         >
-          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, #60a5fa, #c9a84c, #4ade80)" }} />
-          <div className="flex items-center gap-4 p-4">
-            {/* Single Airport icon */}
-            <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center border shrink-0"
-              style={{ borderColor: "rgba(96,165,250,0.3)", backgroundColor: "rgba(96,165,250,0.15)", color: "#60a5fa" }}
+          {/* Animated glow background */}
+          <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+            <div className="absolute -top-1/2 -left-1/4 w-full h-full bg-blue-500/20 blur-[100px] animate-pulse" />
+            <div className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-amber-500/10 blur-[100px]" />
+          </div>
+
+          <div className="relative z-10 p-5 flex items-center gap-5">
+            {/* Powerful Icon Container */}
+            <div className="relative shrink-0">
+               <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
+               <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 relative z-10 shadow-lg"
+                  style={{ 
+                    background: "rgba(255,255,255,0.05)",
+                    backdropFilter: "blur(12px)"
+                  }}
+                >
+                  <svg className="w-7 h-7 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" 
+                      d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                  </svg>
+                </div>
+            </div>
+
+            <div className="flex-1 text-left">
+              <p className="text-[20px] font-display font-bold text-white tracking-tight leading-tight mb-1">Airport Services</p>
+              <p className="text-[11px] text-white/40 leading-snug">Concierge, Lounges & Priority Pickups at 430+ airports</p>
+            </div>
+
+            <div 
+              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 border border-white/5 active:bg-white/10"
             >
-              {Icon.plane}
+              <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
             </div>
-            <div className="flex-1 text-left flex flex-col justify-center">
-              <p className="text-[16px] font-display font-bold text-white/90 tracking-tight leading-none">Airport Services</p>
-            </div>
-            <svg className="w-5 h-5 text-white/25 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
           </div>
         </button>
       </motion.div>

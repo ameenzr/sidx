@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { type Item } from "@/lib/mock-data";
+import { FeedbackData } from "@/components/ActionFeedback";
 
 const FILTERS = ["All", "Networking", "Investment", "Exclusive"];
 
@@ -27,9 +28,12 @@ function parseDateParts(dateStr?: string) {
   };
 }
 
-interface Props { onBack: () => void; }
+interface Props { 
+  onBack: () => void;
+  onFeedback?: (data: FeedbackData) => void;
+}
 
-export function EventsScreen({ onBack }: Props) {
+export function EventsScreen({ onBack, onFeedback }: Props) {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [activeFilter, setActiveFilter] = useState("All");
 
@@ -247,7 +251,7 @@ export function EventsScreen({ onBack }: Props) {
         </div>
       </div>
 
-      <DetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} type="event" />
+      <DetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} type="event" onFeedback={onFeedback} />
     </>
   );
 }

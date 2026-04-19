@@ -18,8 +18,6 @@ function parseDateParts(dateStr?: string) {
 }
 
 export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps) {
-  const tierProgress = Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100);
-  const activeCount = benefits.filter(b => b.isActive).length;
   const previewEvents = featuredItems.slice(0, 3);
   const previewBenefits = benefits.slice(0, 4);
 
@@ -43,42 +41,81 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-bold text-[var(--gold-text)]">{userRewards.tier}</span>
-                  <span className="text-[10px] font-mono text-white/35">{userRewards.points.toLocaleString("en-US")} pts</span>
-                </div>
-                <span className="text-[9px] font-mono text-white/25">{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
-              </div>
-              <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${tierProgress}%` }}
-                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
-                  className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
-                />
+              <div className="flex flex-col">
+                <span className="text-[13px] font-bold text-[var(--gold-text)]">{userRewards.tier} MEMBERSHIP</span>
+                <span className="text-[10px] font-mono text-white/35 uppercase tracking-wider">All privileges active</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Events section ── */}
+      {/* ── Privileges section ── */}
       <div className="mb-6">
         <div className="px-5 flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Upcoming Events</h2>
-
+            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Member Privileges</h2>
           </div>
+        </div>
+
+        {/* Compact benefit rows */}
+        <div className="flex flex-col gap-1.5 px-5">
+          {previewBenefits.map((benefit, i) => (
+            <motion.button
+              key={benefit.id}
+              onClick={onOpenBenefits}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05, duration: 0.28 }}
+              className="w-full flex items-center gap-3 p-3 rounded-[14px] border border-white/5 active:scale-[0.98] transition-transform text-left"
+              style={{ background: `${benefit.accentColor}0d` }}
+            >
+              <div
+                className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center border border-white/8"
+                style={{ backgroundColor: `${benefit.accentColor}40` }}
+              >
+                <span className="text-[8px] font-black text-white/80 tracking-tight">{benefit.logoText}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <p className="text-[12px] font-semibold text-white/85 leading-tight truncate">{benefit.title}</p>
+                  {benefit.isActive && (
+                    <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  )}
+                </div>
+                <p className="text-[9px] font-mono text-white/28 truncate">{benefit.partner}</p>
+              </div>
+              <svg className="w-3.5 h-3.5 shrink-0 text-white/18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </motion.button>
+          ))}
+
+          {/* View all row */}
           <button
-            onClick={onOpenEvents}
-            className="flex items-center gap-1 text-[10px] font-mono text-[var(--gold-text)]/50 active:text-[var(--gold-text)] transition-colors"
+            onClick={onOpenBenefits}
+            className="w-full flex items-center justify-between p-3 rounded-[14px] border border-dashed border-white/8 mt-0.5 active:scale-[0.98] transition-transform"
           >
-            <span>All Events</span>
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
+            <span className="text-[11px] font-mono text-white/25">{benefits.length - previewBenefits.length} more privileges</span>
+            <div className="flex items-center gap-1 text-[var(--gold-text)]/50">
+              <span className="text-[10px] font-mono">View all</span>
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
           </button>
+        </div>
+      </div>
+
+      {/* ── Divider ── */}
+      <div className="mx-5 mb-6 h-px bg-white/5" />
+
+      {/* ── Events section ── */}
+      <div className="mb-4">
+        <div className="px-5 flex items-center justify-between mb-3">
+          <div>
+            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Upcoming Events</h2>
+          </div>
         </div>
 
         {/* Horizontal event cards */}
@@ -142,76 +179,6 @@ export function CommunityTab({ onOpenEvents, onOpenBenefits }: CommunityTabProps
             </div>
             <p className="text-[8px] font-mono text-white/25 uppercase tracking-wider text-center leading-tight">All<br />Events</p>
           </motion.button>
-        </div>
-      </div>
-
-      {/* ── Divider ── */}
-      <div className="mx-5 mb-6 h-px bg-white/5" />
-
-      {/* ── Benefits section ── */}
-      <div className="mb-4">
-        <div className="px-5 flex items-center justify-between mb-3">
-          <div>
-            <h2 className="text-[16px] font-display font-bold text-[var(--gold-text)]/90 tracking-tight">Member Privileges</h2>
-
-          </div>
-          <button
-            onClick={onOpenBenefits}
-            className="flex items-center gap-1 text-[10px] font-mono text-[var(--gold-text)]/50 active:text-[var(--gold-text)] transition-colors"
-          >
-            <span>All Benefits</span>
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Compact benefit rows */}
-        <div className="flex flex-col gap-1.5 px-5">
-          {previewBenefits.map((benefit, i) => (
-            <motion.button
-              key={benefit.id}
-              onClick={onOpenBenefits}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.28 }}
-              className="w-full flex items-center gap-3 p-3 rounded-[14px] border border-white/5 active:scale-[0.98] transition-transform text-left"
-              style={{ background: `${benefit.accentColor}0d` }}
-            >
-              <div
-                className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center border border-white/8"
-                style={{ backgroundColor: `${benefit.accentColor}40` }}
-              >
-                <span className="text-[8px] font-black text-white/80 tracking-tight">{benefit.logoText}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <p className="text-[12px] font-semibold text-white/85 leading-tight truncate">{benefit.title}</p>
-                  {benefit.isActive && (
-                    <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  )}
-                </div>
-                <p className="text-[9px] font-mono text-white/28 truncate">{benefit.partner}</p>
-              </div>
-              <svg className="w-3.5 h-3.5 shrink-0 text-white/18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </motion.button>
-          ))}
-
-          {/* View all row */}
-          <button
-            onClick={onOpenBenefits}
-            className="w-full flex items-center justify-between p-3 rounded-[14px] border border-dashed border-white/8 mt-0.5 active:scale-[0.98] transition-transform"
-          >
-            <span className="text-[11px] font-mono text-white/25">{benefits.length - previewBenefits.length} more privileges</span>
-            <div className="flex items-center gap-1 text-[var(--gold-text)]/50">
-              <span className="text-[10px] font-mono">View all</span>
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </div>
-          </button>
         </div>
       </div>
 

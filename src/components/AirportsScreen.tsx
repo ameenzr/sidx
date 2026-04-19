@@ -438,11 +438,13 @@ function ServiceSheet({
   airport,
   onClose,
   onFeedback,
+  onChangeAirport,
 }: {
   service: AirportService | null;
   airport: Airport | null;
   onClose: () => void;
   onFeedback?: (data: FeedbackData) => void;
+  onChangeAirport?: () => void;
 }) {
   const y = useMotionValue(0);
   const bgOpacity = useTransform(y, [0, 300], [1, 0]);
@@ -532,9 +534,18 @@ function ServiceSheet({
               <div className="px-5 pt-4 pb-32">
                 {/* Title block */}
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] mb-1.5" style={{ color: `${service.accentColor}99` }}>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] mb-1" style={{ color: `${service.accentColor}99` }}>
                     {airport.name} · {airport.fullName}
                   </p>
+                  <button 
+                    onClick={onChangeAirport}
+                    className="flex items-center gap-1.5 text-[9px] font-bold text-white/40 uppercase tracking-[0.15em] mb-4 active:text-[var(--gold-text)] transition-colors"
+                  >
+                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    Change Airport
+                  </button>
                   <h2 className="text-[22px] font-bold text-white tracking-tight leading-tight mb-1">{service.title}</h2>
                   <p className="text-[12px] text-white/45 leading-snug mb-5">{service.tagline}</p>
                 </motion.div>
@@ -648,6 +659,17 @@ export function AirportsScreen({ initialAirport = "COK", highlightService, onFee
   const highlightRef = useRef<HTMLDivElement>(null);
 
   const activeAirport = airports.find(a => a.code === selectedCode) ?? airports[0];
+
+  useEffect(() => {
+    if (highlightService && !activeService) {
+      const svc = activeAirport.services.find(s => s.id === highlightService);
+      if (svc) {
+        setTimeout(() => {
+          setActiveService(svc);
+        }, 300);
+      }
+    }
+  }, [highlightService, activeAirport.services]);
 
   useEffect(() => {
     if (highlightService && highlightRef.current) {
@@ -811,51 +833,32 @@ export function AirportsScreen({ initialAirport = "COK", highlightService, onFee
                   >
                     <button
                       onClick={() => setActiveService(svc)}
-                      className={`w-full text-left rounded-[14px] overflow-hidden border active:scale-[0.98] transition-all relative flex items-center gap-3 p-3 ${
-                        isHighlighted ? "border-white/20 ring-1 ring-white/10" : "border-white/6"
+                      className={`w-full text-left rounded-[20px] overflow-hidden border active:scale-[0.98] transition-all relative flex items-center gap-3.5 p-3.5 ${
+                        isHighlighted ? "border-[var(--gold)]/40 ring-1 ring-[var(--gold)]/10" : "border-white/8"
                       }`}
                       style={{
-                        background: photo
-                          ? "var(--c-card)"
-                          : `linear-gradient(135deg, ${svc.accentColor}${isHighlighted ? "22" : "12"} 0%, var(--c-card) 100%)`
+                        background: `linear-gradient(135deg, ${svc.accentColor}${isHighlighted ? "22" : "08"} 0%, var(--c-surface) 100%)`
                       }}
                     >
-                      {photo ? (
-                        <div className="shrink-0 w-[52px] h-[52px] rounded-[10px] overflow-hidden">
-                          <img src={photo} alt={svc.title} className="w-full h-full object-cover object-center" />
-                        </div>
-                      ) : (
-                        <div
-                          className="shrink-0 w-[52px] h-[52px] rounded-[10px] flex items-center justify-center"
-                          style={{ backgroundColor: `${svc.accentColor}18`, border: `1px solid ${svc.accentColor}28` }}
-                        >
-                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: svc.accentColor }} />
-                        </div>
-                      )}
+                      <div
+                        className="shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center border"
+                        style={{ backgroundColor: `${svc.accentColor}15`, borderColor: `${svc.accentColor}25` }}
+                      >
+                         <svg className="w-5 h-5" style={{ color: svc.accentColor }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                           <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                         </svg>
+                      </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-bold text-white leading-tight">{svc.title}</p>
-                        <p className="text-[10px] text-white/35 mt-0.5 leading-snug line-clamp-1">{svc.tagline}</p>
+                        <p className="text-[14px] font-bold text-white leading-tight">{svc.title}</p>
+                        <p className="text-[10px] text-white/35 mt-1 leading-snug line-clamp-1 truncate">{svc.tagline}</p>
                       </div>
 
-                      <div
-                        className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: `${svc.accentColor}15` }}
-                      >
-                        <svg className="w-3 h-3" style={{ color: svc.accentColor }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      <div className="shrink-0">
+                        <svg className="w-4 h-4 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                         </svg>
                       </div>
-
-                      {isHighlighted && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: [0, 1, 0] }}
-                          transition={{ duration: 2, ease: "easeInOut" }}
-                          className="absolute inset-0 rounded-[14px] pointer-events-none"
-                          style={{ boxShadow: `inset 0 0 18px ${svc.accentColor}22` }}
-                        />
-                      )}
                     </button>
                   </motion.div>
                 );
@@ -863,14 +866,18 @@ export function AirportsScreen({ initialAirport = "COK", highlightService, onFee
             </div>
           </motion.div>
         </AnimatePresence>
+
       </div>
 
-      {/* Service detail sheet */}
       <ServiceSheet
         service={activeService}
-        airport={activeService ? activeAirport : null}
+        airport={activeAirport}
         onClose={() => setActiveService(null)}
         onFeedback={onFeedback}
+        onChangeAirport={() => {
+          setActiveService(null);
+          setTimeout(() => setShowSearch(true), 300);
+        }}
       />
     </>
   );

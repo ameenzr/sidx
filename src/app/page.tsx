@@ -8,6 +8,7 @@ import {
   userPortfolio,
   userRewards,
   homePerks,
+  portfolioInvestments,
   type Item,
 } from "@/lib/mock-data";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,7 +41,8 @@ export default function Home() {
   const [drawerType, setDrawerType] = useState<"event" | "project">("project");
   const [airportsNav, setAirportsNav] = useState<{ airport?: string; service?: string } | null>(null);
   const [activeOpenProjectIndex, setActiveOpenProjectIndex] = useState(0);
-  const openProjectsList = exploreProjects.filter(p => !p.isLocked); // prioritize open ones
+  const openProjectsList = exploreProjects.filter(p => !p.isLocked);
+  const investedIds = new Set(portfolioInvestments.map(p => p.projectId));
 
   const openAirports = (airport?: string, service?: string) => {
     setAirportsNav({ airport, service });
@@ -311,18 +313,27 @@ export default function Home() {
                       className="absolute inset-0 w-full h-full rounded-[4px] border border-[var(--gold)]/20 bg-gradient-to-br from-[#181208] to-[#0a0805] shadow-xl"
                       style={{ transformOrigin: "center" }}
                     >
-                      {/* NEW sticker — first project only, overflows card boundary */}
-                      {i === 0 && (
-                        <div
-                          className="absolute -top-3.5 -right-2 z-30 rotate-6 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-black rounded-sm shadow-lg"
-                          style={{
-                            background: "linear-gradient(135deg, #f0d060, #c9a84c)",
-                            boxShadow: "0 2px 8px rgba(201,168,76,0.6), 0 1px 2px rgba(0,0,0,0.4)",
-                          }}
-                        >
-                          New
-                        </div>
-                      )}
+                      {/* Stickers overlay */}
+                      <div className="absolute top-0 right-0 z-30 flex flex-col items-end gap-2 pr-2 pt-2">
+                        {project.isNew && (
+                          <div
+                            className="rotate-6 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-black rounded-sm shadow-lg"
+                            style={{
+                              background: "linear-gradient(135deg, #f0d060, #c9a84c)",
+                              boxShadow: "0 2px 8px rgba(201,168,76,0.6), 0 1px 2px rgba(0,0,0,0.4)",
+                            }}
+                          >
+                            New
+                          </div>
+                        )}
+                        {investedIds.has(project.id) && (
+                          <div
+                            className="-rotate-3 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-[var(--gold-text)] rounded-full border border-[var(--gold)]/40 backdrop-blur-md bg-black/40 shadow-lg"
+                          >
+                            Invested
+                          </div>
+                        )}
+                      </div>
                       <div className="absolute inset-0 overflow-hidden rounded-[4px]">
                       <button
                         onClick={() => {
@@ -466,7 +477,7 @@ export default function Home() {
               </div>
 
               {/* Perk cards */}
-              <div className="relative z-10 flex gap-3 overflow-x-auto scrollbar-none px-5 pb-1">
+              <div className="relative z-10 flex gap-3 overflow-x-auto scrollbar-none px-5 pb-6">
                 {homePerks.map((perk, i) => (
                   <motion.button
                     key={perk.id}
@@ -505,22 +516,7 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Tier progress */}
-              <div className="relative z-10 mx-5 mt-4 mb-5">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-mono text-[var(--gold-text)]/50 uppercase tracking-wider">{userRewards.tier}</span>
-                  <span className="text-[10px] font-mono text-white/22">{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
-                </div>
-                <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ backgroundColor: "rgba(201,168,76,0.10)" }}>
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100)}%` }}
-                    transition={{ duration: 1.4, ease: "easeOut", delay: 0.3 }}
-                    className="h-full rounded-full"
-                    style={{ background: "linear-gradient(90deg, #c9a84c, #f0d080)", boxShadow: "0 0 6px rgba(201,168,76,0.6)" }}
-                  />
-                </div>
-              </div>
+
             </section>
 
             {/* ── 5. Upcoming Events ── */}
@@ -580,7 +576,12 @@ export default function Home() {
           </div>
         )}
 
-        {activeTab === "Projects" && <ProjectsTab onOpenPortfolio={() => setActiveTab("Portfolio")} />}
+        {activeTab === "Projects" && (
+          <ProjectsTab 
+            onOpenPortfolio={() => setActiveTab("Portfolio")} 
+            onFeedback={setFeedback}
+          />
+        )}
         {activeTab === "Travel" && <TravelTab onOpenAirports={() => openAirports()} onFeedback={setFeedback} />}
         {activeTab === "Airports" && (
           <AirportsScreen
@@ -596,7 +597,7 @@ export default function Home() {
             onOpenBenefits={() => setActiveTab("Benefits")}
           />
         )}
-        {activeTab === "Events" && <EventsScreen onBack={() => setActiveTab("Community")} />}
+        {activeTab === "Events" && <EventsScreen onBack={() => setActiveTab("Community")} onFeedback={setFeedback} />}
         {activeTab === "Benefits" && (
           <BenefitsScreen 
             onBack={() => setActiveTab("Community")} 

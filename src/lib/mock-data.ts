@@ -210,6 +210,7 @@ export const hotProjects: Item[] = [
     ],
     tenure: "6 Years",
     deadline: "10 May 2026",
+    isNew: true,
     structure: "Revenue Share (Venue Operations)",
     exitRoute: "REIT listing or promoter buyback",
     highlights: [
@@ -260,10 +261,7 @@ export const exploreProjects: Item[] = hotProjects;
 // ─── Rewards & Member Perks ────────────────────────────────────────────────────
 
 export const userRewards = {
-  points: 12450,
   tier: "GOLD" as const,
-  nextTier: "PLATINUM" as const,
-  pointsToNextTier: 2550,
 };
 
 export interface HomePerk {
