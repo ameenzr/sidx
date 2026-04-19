@@ -201,8 +201,6 @@ export function BenefitsTab() {
     ? benefits
     : benefits.filter(b => b.category === activeCategory.toLowerCase());
 
-  const tierProgress = Math.round((userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100);
-
   return (
     <>
       <div className="flex flex-col min-h-screen pt-20 pb-[110px] text-white">
@@ -232,21 +230,7 @@ export function BenefitsTab() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-mono text-white/30 uppercase tracking-wider mb-0.5">Points Balance</p>
-                  <p className="text-[22px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString("en-US")}</p>
                 </div>
-              </div>
-              <div className="flex justify-between text-[10px] font-mono text-white/30 mb-2">
-                <span>{userRewards.tier}</span>
-                <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} pts to {userRewards.nextTier}</span>
-              </div>
-              <div className="h-[3px] bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${tierProgress}%` }}
-                  transition={{ duration: 1.4, ease: "easeOut", delay: 0.2 }}
-                  className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
-                />
               </div>
             </div>
           </div>
