@@ -20,10 +20,6 @@ const SPARKLINES: Record<string, string> = {
 };
 
 export function PortfolioScreen({ onBack }: Props) {
-  const tierProgress = Math.round(
-    (userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100
-  );
-
   return (
     <div className="flex flex-col min-h-screen pt-[56px] pb-24 text-white relative">
 
@@ -235,30 +231,17 @@ export function PortfolioScreen({ onBack }: Props) {
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 100% 70% at 80% 20%, rgba(180,130,40,0.18), transparent)" }} />
             <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #c9a84c, #e8c97a, transparent)" }} />
             <div className="relative z-10">
-              <div className="flex justify-between items-center mb-3">
+              <div className="flex justify-between items-center mt-1">
                 <div className="flex items-center gap-2">
-                  <svg className="w-3.5 h-3.5 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
+                  <svg className="w-4 h-4 text-[var(--gold-text)]" viewBox="0 0 16 16" fill="currentColor">
                     <path d="M8 1l1.9 4.1L14 5.6l-3 2.9.7 4.1L8 10.4l-3.7 2.2.7-4.1-3-2.9 4.1-.5z" />
                   </svg>
-                  <span className="text-[14px] font-bold text-[var(--gold-text)] tracking-wide">{userRewards.tier}</span>
+                  <span className="text-[16px] font-bold text-[var(--gold-text)] tracking-widest">{userRewards.tier}</span>
                 </div>
-                <p className="text-[18px] font-bold text-[var(--c-text-h)]">{userRewards.points.toLocaleString("en-US")}<span className="text-[9px] font-mono text-white/25 ml-1">pts</span></p>
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-white/22 mb-1.5">
-                <span>{userRewards.tier}</span>
-                <span>{userRewards.pointsToNextTier.toLocaleString("en-US")} to {userRewards.nextTier}</span>
-              </div>
-              <div className="h-[2.5px] bg-white/8 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${tierProgress}%` }}
-                  transition={{ duration: 1.4, ease: "easeOut", delay: 0.4 }}
-                  className="h-full rounded-full bg-gradient-to-r from-[var(--gold)] to-amber-400"
-                />
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-white/15 mt-2">
-                <span>Member since Jan 2025</span>
-                <span>Valid until Dec 2026</span>
+                <div className="flex flex-col text-right text-[9px] font-mono text-white/25 leading-tight gap-1 uppercase tracking-wider">
+                  <span>Member since Jan '25</span>
+                  <span>Valid till Dec '26</span>
+                </div>
               </div>
             </div>
           </div>

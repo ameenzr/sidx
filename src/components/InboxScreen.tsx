@@ -200,14 +200,17 @@ const TYPE_META: Record<NotifType, { icon: string; color: string; bg: string }> 
 };
 
 export function InboxScreen() {
-  const [activeFilter, setActiveFilter] = useState<NotifType | null>(null);
+  const [activeTypeFilter, setActiveTypeFilter] = useState<NotifType | null>(null);
+  const [readFilter, setReadFilter] = useState<"all" | "unread">("unread");
   const [readIds, setReadIds] = useState<Set<string>>(
     new Set(NOTIFICATIONS.filter(n => n.isRead).map(n => n.id))
   );
 
-  const filtered = activeFilter
-    ? NOTIFICATIONS.filter(n => n.type === activeFilter)
-    : NOTIFICATIONS;
+  const filtered = NOTIFICATIONS.filter(n => {
+    if (activeTypeFilter && n.type !== activeTypeFilter) return false;
+    if (readFilter === "unread" && readIds.has(n.id)) return false;
+    return true;
+  });
 
   const unreadCount = NOTIFICATIONS.filter(n => !readIds.has(n.id)).length;
 
@@ -220,134 +223,180 @@ export function InboxScreen() {
   };
 
   return (
-    <div className="flex flex-col w-full pt-[56px] pb-24">
-
-      {/* ── Header Controls ── */}
-      <div className="flex items-center justify-between px-5 pt-4 pb-2">
-        <p className="text-[11px] font-mono text-[var(--c-text-muted)] uppercase tracking-widest leading-none">
-          {unreadCount > 0 ? `${unreadCount} unread messages` : "All caught up"}
-        </p>
-        {unreadCount > 0 && (
-          <button
-            onClick={markAllRead}
-            className="text-[10px] font-mono text-[var(--gold-text)]/60 active:text-[var(--gold-text)]"
-          >
-            mark all read
-          </button>
-        )}
+    <div className="flex flex-col w-full pt-[56px] pb-24 relative">
+      {/* Background ambient light */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-x-0 top-0 h-[300px]" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,168,76,0.12), transparent)" }} />
       </div>
 
-      {/* ── Filter badges ── */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-none px-5 pb-3 pt-1">
-        {FILTERS.map(f => {
-          const isActive = activeFilter === f.type;
-          return (
+      <div className="relative z-10">
+        {/* ── Header Controls ── */}
+        <div className="px-5 pt-4 pb-5 flex items-center justify-between">
+          <p className="text-[11px] font-mono text-[var(--gold-text)]/70 uppercase tracking-[0.2em]">
+            {unreadCount > 0 ? `${unreadCount} new messages` : "All caught up"}
+          </p>
+          {unreadCount > 0 && (
             <button
-              key={f.label}
-              onClick={() => setActiveFilter(f.type)}
-              className="shrink-0 px-3.5 py-1.5 rounded-full text-[11px] font-mono font-medium transition-all duration-200 active:scale-95"
-              style={
-                isActive
-                  ? {
-                      backgroundColor: "var(--gold)",
-                      color: "#0a0805",
-                      border: "1px solid transparent",
-                    }
-                  : {
-                      backgroundColor: "rgba(255,255,255,0.04)",
-                      color: "rgba(255,255,255,0.45)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }
-              }
+              onClick={markAllRead}
+              className="px-2 py-1 text-[10px] font-mono font-bold text-[var(--gold-text)]/60 active:text-[var(--gold-text)] uppercase tracking-widest transition-colors"
             >
-              {f.label}
+              Mark all read
             </button>
-          );
-        })}
-      </div>
+          )}
+        </div>
 
-      {/* ── Notification list ── */}
-      <div className="flex flex-col px-4 gap-2">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((notif, i) => {
-            const meta = TYPE_META[notif.type];
-            const isRead = readIds.has(notif.id);
+        {/* ── Status Filter (All / Unread) Segmented Control ── */}
+        <div className="px-5 mb-5">
+          <div className="bg-black/50 backdrop-blur-md rounded-xl p-1 flex border border-white/8 relative">
+            <button
+              onClick={() => setReadFilter("all")}
+              className={`flex-1 py-2.5 text-[12px] font-bold rounded-lg transition-all z-10 ${readFilter === "all" ? "text-black" : "text-white/40"}`}
+            >
+              All Messages
+            </button>
+            <button
+              onClick={() => setReadFilter("unread")}
+              className={`flex-1 py-2.5 text-[12px] font-bold rounded-lg transition-all z-10 flex items-center justify-center gap-1.5 ${readFilter === "unread" ? "text-black" : "text-white/40"}`}
+            >
+              Unread
+              {unreadCount > 0 && (
+                <span className={`px-1.5 py-0.5 rounded-full flex items-center justify-center text-[9px] font-black leading-none ${readFilter === "unread" ? "bg-black/20 text-black" : "bg-[var(--gold)]/20 text-[var(--gold-text)]"}`}>
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+            
+            {/* Animated slider pill */}
+            <div 
+              className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg bg-gradient-to-r from-[var(--gold)] to-amber-400 transition-all duration-300 shadow-[0_2px_10px_rgba(201,168,76,0.3)]"
+              style={{ left: readFilter === "all" ? "4px" : "calc(50%)" }}
+            />
+          </div>
+        </div>
+
+        {/* ── Type Filter (Categories) ── */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-none px-5 pb-5">
+          {FILTERS.map(f => {
+            const isActive = activeTypeFilter === f.type;
             return (
-              <motion.button
-                key={notif.id}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ delay: i * 0.04, duration: 0.28 }}
-                onClick={() => markRead(notif.id)}
-                className="w-full text-left rounded-[18px] p-4 transition-all duration-200 active:scale-[0.98] relative overflow-hidden"
-                style={{
-                  backgroundColor: isRead
-                    ? "rgba(255,255,255,0.025)"
-                    : "rgba(255,255,255,0.045)",
-                  border: isRead
-                    ? "1px solid rgba(255,255,255,0.06)"
-                    : "1px solid rgba(255,255,255,0.10)",
-                }}
+              <button
+                key={f.label}
+                onClick={() => setActiveTypeFilter(f.type)}
+                className="shrink-0 px-4 py-2 rounded-full text-[11px] font-mono font-medium transition-all duration-200 active:scale-95 flex items-center gap-2"
+                style={
+                  isActive
+                    ? { backgroundColor: "rgba(255,255,255,0.12)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)" }
+                    : { backgroundColor: "transparent", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.08)" }
+                }
               >
-                {/* Unread accent line */}
-                {!isRead && (
-                  <div
-                    className="absolute left-0 top-3 bottom-3 w-[2.5px] rounded-full"
-                    style={{ backgroundColor: meta.color }}
+                {f.type && (
+                  <span 
+                    className="w-1.5 h-1.5 rounded-full" 
+                    style={{ backgroundColor: isActive ? TYPE_META[f.type].color : "currentColor", opacity: isActive ? 1 : 0.5 }} 
                   />
                 )}
-
-                <div className="flex gap-3 items-start">
-                  {/* Icon */}
-                  <div
-                    className="shrink-0 w-9 h-9 rounded-[12px] flex items-center justify-center mt-0.5"
-                    style={{ backgroundColor: meta.bg, border: `1px solid ${meta.color}25` }}
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" style={{ color: meta.color }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d={meta.icon} />
-                    </svg>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <p className={`text-[13px] font-bold leading-snug truncate ${isRead ? "text-white/65" : "text-white/90"}`}>
-                        {notif.title}
-                      </p>
-                      {notif.tag && (
-                        <span
-                          className="shrink-0 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
-                          style={{ backgroundColor: meta.bg, color: meta.color }}
-                        >
-                          {notif.tag}
-                        </span>
-                      )}
-                    </div>
-                    <p className={`text-[11px] leading-relaxed mb-1.5 ${isRead ? "text-white/30" : "text-white/50"}`}>
-                      {notif.body}
-                    </p>
-                    <p className="text-[9px] font-mono text-white/20 uppercase tracking-wider">
-                      {notif.time}
-                    </p>
-                  </div>
-                </div>
-              </motion.button>
+                {f.label}
+              </button>
             );
           })}
-        </AnimatePresence>
+        </div>
 
-        {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-white/4 border border-white/6 flex items-center justify-center mb-3">
-              <svg className="w-5 h-5 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z" />
-              </svg>
-            </div>
-            <p className="text-[12px] font-medium text-white/25">No messages here</p>
-          </div>
-        )}
+        {/* ── Message List ── */}
+        <div className="flex flex-col px-4 gap-3 overflow-hidden">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((notif, i) => {
+              const meta = TYPE_META[notif.type];
+              const isRead = readIds.has(notif.id);
+              return (
+                <motion.button
+                  key={notif.id}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ delay: i * 0.03, duration: 0.28 }}
+                  onClick={() => markRead(notif.id)}
+                  className={`w-full text-left rounded-[22px] p-4.5 transition-all duration-300 active:scale-[0.98] relative border ${isRead ? "border-white/5 bg-white/[0.02]" : "border-[var(--gold)]/25 bg-white/[0.06]"}`}
+                  style={{
+                    boxShadow: !isRead ? "0 8px 32px rgba(201,168,76,0.08)" : "none",
+                  }}
+                >
+                  <div className="flex gap-4 items-start">
+                    {/* Icon section */}
+                    <div className="relative shrink-0 mt-0.5">
+                      <div
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center relative z-10"
+                        style={{ backgroundColor: isRead ? "rgba(255,255,255,0.03)" : meta.bg, border: `1px solid ${isRead ? "rgba(255,255,255,0.05)" : meta.color + "30"}` }}
+                      >
+                        <svg className="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" style={{ color: isRead ? "rgba(255,255,255,0.3)" : meta.color }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d={meta.icon} />
+                        </svg>
+                      </div>
+                      {!isRead && (
+                        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[var(--gold)] border-2 border-black rounded-full z-20 shadow-[0_0_8px_rgba(201,168,76,0.8)]" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <p className={`text-[15px] font-bold leading-tight truncate ${isRead ? "text-white/50" : "text-white"}`}>
+                          {notif.title}
+                        </p>
+                        <span className={`shrink-0 text-[10px] font-mono ${isRead ? "text-white/20" : "text-[var(--gold-text)]/80"}`}>
+                          {notif.time}
+                        </span>
+                      </div>
+                      <p className={`text-[13px] leading-relaxed mb-3 line-clamp-2 ${isRead ? "text-white/30" : "text-white/70"}`}>
+                        {notif.body}
+                      </p>
+                      
+                      {/* Tag & Action */}
+                      <div className="flex items-center justify-between mt-auto">
+                        {notif.tag && (
+                          <span
+                            className="text-[9px] font-mono font-bold px-2 py-1 rounded-[6px] uppercase tracking-[0.15em] border"
+                            style={{ 
+                              backgroundColor: isRead ? "rgba(255,255,255,0.02)" : meta.bg, 
+                              color: isRead ? "rgba(255,255,255,0.25)" : meta.color,
+                              borderColor: isRead ? "transparent" : `${meta.color}25` 
+                            }}
+                          >
+                            {notif.tag}
+                          </span>
+                        )}
+                        {!isRead && (
+                          <span className="text-[10px] font-bold text-[var(--gold-text)]/60 uppercase tracking-wider flex items-center gap-1 ml-auto">
+                            Tap to read
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+
+          {filtered.length === 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-20 text-center"
+            >
+              <div className="w-16 h-16 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4">
+                <svg className="w-7 h-7 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z" />
+                </svg>
+              </div>
+              <p className="text-[14px] font-medium text-white/40 mb-1">No messages found</p>
+              <p className="text-[12px] text-white/20">Try changing your filters to see more.</p>
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );

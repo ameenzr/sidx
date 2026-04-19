@@ -265,6 +265,14 @@ function BenefitDrawer({ benefit, onClose, onFeedback }: { benefit: BenefitItem 
                         primaryActionLabel: "View Receipt",
                         onPrimaryAction: () => {},
                       });
+                    } else if (benefit.isActive && onFeedback) {
+                      onFeedback({
+                        title: "Action Initiated",
+                        message: `Connecting to ${benefit.partner} portal... Have your SID-X details ready.`,
+                        type: "info",
+                        primaryActionLabel: "Open Portal",
+                        onPrimaryAction: () => {},
+                      });
                     }
                     onClose();
                   }}

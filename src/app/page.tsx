@@ -156,13 +156,13 @@ export default function Home() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 onClick={() => setActiveTab("Inbox")}
-                className="relative w-9 h-9 flex items-center justify-center active:scale-90 transition-transform"
+                className="relative w-10 h-10 flex items-center justify-center active:scale-90 transition-transform"
               >
-                <svg className="w-4.5 h-4.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                <svg className="w-6 h-6 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.98l7.5-4.04a2.25 2.25 0 012.134 0l7.5 4.04a2.25 2.25 0 011.183 1.98V19.5z" />
                 </svg>
                 {/* Unread badge */}
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[var(--gold)] flex items-center justify-center text-[8px] font-black text-black leading-none">
+                <span className="absolute top-1.5 right-1 w-3.5 h-3.5 rounded-full bg-[var(--gold)] flex items-center justify-center text-[7.5px] font-black text-black leading-none shadow-[0_0_0_1.5px_#100d08]">
                   3
                 </span>
               </motion.button>
