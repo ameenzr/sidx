@@ -466,7 +466,6 @@ function ServiceSheet({
           />
           <motion.div
             key="sheet"
-            style={{ y }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.3 }}

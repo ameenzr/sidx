@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { userPortfolio, userRewards } from "@/lib/mock-data";
-import { useTheme } from "@/components/ThemeProvider";
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -50,7 +49,6 @@ const activityLog = [
 ];
 
 export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawerProps) {
-  const { theme, toggle } = useTheme();
   const tierProgress = Math.round(
     (userRewards.points / (userRewards.points + userRewards.pointsToNextTier)) * 100
   );
@@ -268,30 +266,7 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
             </div>
 
             {/* ── Footer ── */}
-            <div className="absolute bottom-0 left-0 right-0 px-5 pb-8 pt-4 flex items-center justify-between" style={{ background: `linear-gradient(to top, var(--c-surface) 60%, transparent)` }}>
-              {/* Theme toggle */}
-              <button
-                onClick={toggle}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl active:scale-95 transition-transform"
-                style={{ backgroundColor: "var(--c-border)", border: "1px solid var(--c-border-em)" }}
-              >
-                {theme === "dark" ? (
-                  <>
-                    <svg className="w-3.5 h-3.5 text-[var(--gold-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                    </svg>
-                    <span className="text-[10px] font-mono font-bold text-[var(--gold-text)]">Light</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" style={{ color: "var(--c-text-muted)" }}>
-                      <path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                    </svg>
-                    <span className="text-[10px] font-mono font-bold" style={{ color: "var(--c-text-muted)" }}>Dark</span>
-                  </>
-                )}
-              </button>
-
+            <div className="absolute bottom-0 left-0 right-0 px-5 pb-8 pt-4 flex items-center justify-end" style={{ background: `linear-gradient(to top, var(--c-surface) 60%, transparent)` }}>
               <div className="flex items-center gap-3">
                 <button className="text-[10px] font-mono transition-colors" style={{ color: "var(--c-text-dim)" }}>
                   Contact RM
