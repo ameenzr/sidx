@@ -12,6 +12,7 @@ import {
 } from "@/lib/mock-data";
 import { motion, AnimatePresence } from "framer-motion";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { ActionFeedback, FeedbackData } from "@/components/ActionFeedback";
 import { CommunityTab } from "@/components/CommunityTab";
 import { EventsScreen } from "@/components/EventsScreen";
 import { BenefitsScreen } from "@/components/BenefitsScreen";
@@ -34,6 +35,7 @@ export default function Home() {
   const [hasLaunched, setHasLaunched] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [drawerType, setDrawerType] = useState<"event" | "project">("project");
   const [airportsNav, setAirportsNav] = useState<{ airport?: string; service?: string } | null>(null);
@@ -96,6 +98,11 @@ export default function Home() {
         className="flex flex-col min-h-full pt-[56px] overflow-x-hidden"
         style={{ opacity: hasLaunched ? 1 : 0, transition: "opacity 0.5s ease-in-out", pointerEvents: hasLaunched ? "auto" : "none" }}
       >
+        <ActionFeedback 
+          data={feedback} 
+          onClose={() => setFeedback(null)} 
+        />
+
         {/* ── Global Navbar ── */}
         <header
           data-testid="main-header"
@@ -574,12 +581,13 @@ export default function Home() {
         )}
 
         {activeTab === "Projects" && <ProjectsTab onOpenPortfolio={() => setActiveTab("Portfolio")} />}
-        {activeTab === "Travel" && <TravelTab onOpenAirports={() => openAirports()} />}
+        {activeTab === "Travel" && <TravelTab onOpenAirports={() => openAirports()} onFeedback={setFeedback} />}
         {activeTab === "Airports" && (
           <AirportsScreen
             onBack={() => setActiveTab("Travel")}
             initialAirport={airportsNav?.airport}
             highlightService={airportsNav?.service}
+            onFeedback={setFeedback}
           />
         )}
         {activeTab === "Community" && (
@@ -589,7 +597,12 @@ export default function Home() {
           />
         )}
         {activeTab === "Events" && <EventsScreen onBack={() => setActiveTab("Community")} />}
-        {activeTab === "Benefits" && <BenefitsScreen onBack={() => setActiveTab("Community")} />}
+        {activeTab === "Benefits" && (
+          <BenefitsScreen 
+            onBack={() => setActiveTab("Community")} 
+            onFeedback={setFeedback}
+          />
+        )}
         {activeTab === "Portfolio" && <PortfolioScreen onBack={() => setActiveTab("Home")} />}
         {activeTab === "Inbox" && <InboxScreen />}
 
@@ -598,7 +611,12 @@ export default function Home() {
           onClose={() => setIsProfileOpen(false)}
           onOpenPortfolio={() => setActiveTab("Portfolio")}
         />
-        <DetailDrawer item={selectedItem} onClose={() => setSelectedItem(null)} type={drawerType} />
+        <DetailDrawer 
+          item={selectedItem} 
+          onClose={() => setSelectedItem(null)} 
+          type={drawerType}
+          onFeedback={setFeedback}
+        />
         {!isSubScreen && <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />}
       </div>
     </>

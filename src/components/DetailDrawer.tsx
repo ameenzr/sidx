@@ -4,14 +4,16 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "
 import { Item } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/Badge";
 import { useState, useRef, useEffect } from "react";
+import { FeedbackData } from "@/components/ActionFeedback";
 
 interface DetailDrawerProps {
   item: Item | null;
   onClose: () => void;
   type: "event" | "project";
+  onFeedback?: (data: FeedbackData) => void;
 }
 
-export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
+export function DetailDrawer({ item, onClose, type, onFeedback }: DetailDrawerProps) {
   const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -387,6 +389,20 @@ export function DetailDrawer({ item, onClose, type }: DetailDrawerProps) {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.36 }}
+                  onClick={() => {
+                    if (onFeedback) {
+                      onFeedback({
+                        title: type === "event" ? "Registration Received" : "Interest Registered",
+                        message: type === "event" 
+                          ? "Your request has been sent. A dedicated event coordinator will call you back within 2 hours to confirm your pass."
+                          : "A dedicated relationship manager has been assigned and will call you back within 24 hours to discuss the deal terms.",
+                        type: "success",
+                        primaryActionLabel: "Contact RM",
+                        onPrimaryAction: () => window.open("tel:+919876543210"),
+                      });
+                    }
+                    onClose();
+                  }}
                   className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-[0.98] transition-transform"
                 >
                   {type === "event" ? "Register for this Event" : "Express Interest"}

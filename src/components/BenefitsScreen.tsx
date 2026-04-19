@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { useState } from "react";
+import { FeedbackData } from "@/components/ActionFeedback";
 import { userRewards } from "@/lib/mock-data";
 
 interface BenefitItem {
@@ -128,7 +129,7 @@ export type { BenefitItem };
 
 const CATEGORY_FILTERS = ["All", "Investment", "Lifestyle", "Travel", "Finance"] as const;
 
-function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onClose: () => void }) {
+function BenefitDrawer({ benefit, onClose, onFeedback }: { benefit: BenefitItem | null; onClose: () => void; onFeedback?: (data: FeedbackData) => void }) {
   const y = useMotionValue(0);
   const bgOpacity = useTransform(y, [0, 300], [1, 0]);
 
@@ -255,6 +256,18 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.26 }}
+                  onClick={() => {
+                    if (!benefit.isActive && onFeedback) {
+                      onFeedback({
+                        title: "Benefit Activated",
+                        message: `Your ${benefit.title} perk has been activated. A priority code and redeem instructions have been sent to your WhatsApp.`,
+                        type: "success",
+                        primaryActionLabel: "View Receipt",
+                        onPrimaryAction: () => {},
+                      });
+                    }
+                    onClose();
+                  }}
                   className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-[0.98] transition-transform"
                 >
                   {benefit.isActive ? "View Details" : "Activate Benefit"}
@@ -274,9 +287,10 @@ function BenefitDrawer({ benefit, onClose }: { benefit: BenefitItem | null; onCl
 
 interface BenefitsScreenProps {
   onBack: () => void;
+  onFeedback?: (data: FeedbackData) => void;
 }
 
-export function BenefitsScreen({ onBack }: BenefitsScreenProps) {
+export function BenefitsScreen({ onBack, onFeedback }: BenefitsScreenProps) {
   const [selected, setSelected] = useState<BenefitItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<typeof CATEGORY_FILTERS[number]>("All");
 
@@ -396,7 +410,7 @@ export function BenefitsScreen({ onBack }: BenefitsScreenProps) {
         </div>
       </div>
 
-      <BenefitDrawer benefit={selected} onClose={() => setSelected(null)} />
+      <BenefitDrawer benefit={selected} onClose={() => setSelected(null)} onFeedback={onFeedback} />
     </>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TabHeader } from "@/components/ui/TabHeader";
+import { FeedbackData } from "@/components/ActionFeedback";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -144,7 +145,7 @@ const services: ServiceCard[] = [
    EXPANDABLE SERVICE CARD
    ═══════════════════════════════════════════════════ */
 
-function ServiceCardItem({ svc }: { svc: ServiceCard }) {
+function ServiceCardItem({ svc, onFeedback }: { svc: ServiceCard; onFeedback?: (data: FeedbackData) => void }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -210,6 +211,18 @@ function ServiceCardItem({ svc }: { svc: ServiceCard }) {
               )}
               {svc.note && <p className="text-[8px] font-mono text-white/25 mb-3">{svc.note}</p>}
               <button
+                onClick={() => {
+                  if (onFeedback) {
+                    onFeedback({
+                      title: "Inquiry Sent",
+                      message: `Your request for ${svc.title} has been received. A travel specialist will contact you with curated rates and availability within 4 hours.`,
+                      type: "success",
+                      primaryActionLabel: "Contact Concierge",
+                      onPrimaryAction: () => window.open("tel:+919876543210"),
+                    });
+                  }
+                  setOpen(false);
+                }}
                 className="w-full py-2.5 rounded-[14px] text-[10px] font-bold tracking-wide transition-opacity active:opacity-75"
                 style={{ backgroundColor: `${svc.accentColor}18`, color: svc.accentColor, border: `1px solid ${svc.accentColor}35` }}
               >
@@ -229,9 +242,10 @@ function ServiceCardItem({ svc }: { svc: ServiceCard }) {
 
 interface TravelTabProps {
   onOpenAirports?: () => void;
+  onFeedback?: (data: FeedbackData) => void;
 }
 
-export function TravelTab({ onOpenAirports }: TravelTabProps) {
+export function TravelTab({ onOpenAirports, onFeedback }: TravelTabProps) {
   return (
     <div className="flex flex-col w-full pb-32 pt-4">
       {/* ── Header ── */}
@@ -277,7 +291,7 @@ export function TravelTab({ onOpenAirports }: TravelTabProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 + 0.15, duration: 0.36 }}
           >
-            <ServiceCardItem svc={svc} />
+            <ServiceCardItem svc={svc} onFeedback={onFeedback} />
           </motion.div>
         ))}
       </div>

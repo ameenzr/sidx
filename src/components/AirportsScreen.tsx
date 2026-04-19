@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
+import { FeedbackData } from "@/components/ActionFeedback";
 
 /* ═══════════════════════════════════════════════════
    TYPES
@@ -436,10 +437,12 @@ function ServiceSheet({
   service,
   airport,
   onClose,
+  onFeedback,
 }: {
   service: AirportService | null;
   airport: Airport | null;
   onClose: () => void;
+  onFeedback?: (data: FeedbackData) => void;
 }) {
   const y = useMotionValue(0);
   const bgOpacity = useTransform(y, [0, 300], [1, 0]);
@@ -591,6 +594,18 @@ function ServiceSheet({
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.28 }}
+                  onClick={() => {
+                    if (onFeedback) {
+                      onFeedback({
+                        title: "Booking Initiated",
+                        message: "Our airport concierge has been notified. You will receive a confirmation call and WhatsApp details within 2 hours.",
+                        type: "success",
+                        primaryActionLabel: "Contact Concierge",
+                        onPrimaryAction: () => window.open("tel:+919876543210"),
+                      });
+                    }
+                    onClose();
+                  }}
                   className="w-full py-4 text-[14px] font-bold rounded-2xl tracking-wide active:scale-[0.98] transition-transform"
                   style={{
                     background: `linear-gradient(135deg, ${service.accentColor} 0%, ${service.accentColor}cc 100%)`,
@@ -621,9 +636,10 @@ interface AirportsScreenProps {
   onBack: () => void;
   initialAirport?: string;
   highlightService?: string;
+  onFeedback?: (data: FeedbackData) => void;
 }
 
-export function AirportsScreen({ initialAirport = "COK", highlightService }: AirportsScreenProps) {
+export function AirportsScreen({ initialAirport = "COK", highlightService, onFeedback }: AirportsScreenProps) {
   const [selectedCode, setSelectedCode] = useState(initialAirport);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -854,6 +870,7 @@ export function AirportsScreen({ initialAirport = "COK", highlightService }: Air
         service={activeService}
         airport={activeService ? activeAirport : null}
         onClose={() => setActiveService(null)}
+        onFeedback={onFeedback}
       />
     </>
   );
