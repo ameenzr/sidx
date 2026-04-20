@@ -75,7 +75,7 @@ export default function Home() {
   const getScreenTitle = () => {
     switch (activeTab) {
       case "Portfolio": return "My Portfolio";
-      case "Airports": return "Airport Services";
+      case "Airports": return "Airports & Flights";
       case "Events": return "Events";
       case "Benefits": return "Member Privileges";
       case "Inbox": return "Inbox";
@@ -133,7 +133,7 @@ export default function Home() {
                 </button>
                 <span className="text-[20px] font-display font-medium text-[var(--gold-text)]/90 tracking-tight leading-none truncate">
                   {activeTab === "Portfolio" && "My Portfolio"}
-                  {activeTab === "Airports" && "Airport Services"}
+                  {activeTab === "Airports" && "Airports & Flights"}
                   {activeTab === "Events" && "Events"}
                   {activeTab === "Benefits" && "Privileges"}
                   {activeTab === "Inbox" && "Inbox"}
@@ -406,7 +406,7 @@ export default function Home() {
                   className="group flex items-center gap-1.5 active:scale-95 transition-transform"
                 >
                   <h2 className="text-[10px] font-display font-medium text-[var(--gold-text)]/60 tracking-[0.3em] uppercase">
-                    Services
+                    Airports & Flights
                     <span className="inline-block ml-1.5 opacity-60 group-active:translate-x-1 transition-transform">&gt;</span>
                   </h2>
                 </button>

@@ -168,9 +168,9 @@ function ServiceCardItem({ svc, onFeedback }: { svc: ServiceCard; onFeedback?: (
           {svc.icon}
         </div>
         <div className="flex-1 min-w-0">
-        <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <p className="text-[16px] font-display font-bold text-white/90 tracking-tight leading-none">{svc.title}</p>
-        </div>
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <p className="text-[16px] font-display font-bold text-white/90 tracking-tight leading-none">{svc.title}</p>
+          </div>
         </div>
         <svg
           className="shrink-0 w-4 h-4 text-white/25 mt-0.5 transition-transform duration-300"
@@ -261,7 +261,7 @@ export function TravelTab({ onOpenAirports, onFeedback }: TravelTabProps) {
         <button
           onClick={onOpenAirports}
           className="w-full rounded-[28px] border border-white/12 overflow-hidden relative active:scale-[0.98] transition-all group shadow-2xl"
-          style={{ 
+          style={{
             background: "linear-gradient(165deg, #1e293b 0%, #0f172a 100%)",
             boxShadow: "0 20px 40px -20px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02)"
           }}
@@ -275,19 +275,19 @@ export function TravelTab({ onOpenAirports, onFeedback }: TravelTabProps) {
           <div className="relative z-10 p-5 flex items-center gap-5">
             {/* Powerful Icon Container */}
             <div className="relative shrink-0">
-               <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
-               <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 relative z-10 shadow-lg"
-                  style={{ 
-                    background: "rgba(255,255,255,0.05)",
-                    backdropFilter: "blur(12px)"
-                  }}
-                >
-                  <svg className="w-7 h-7 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" 
-                      d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                  </svg>
-                </div>
+              <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 relative z-10 shadow-lg"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  backdropFilter: "blur(12px)"
+                }}
+              >
+                <svg className="w-7 h-7 text-blue-400 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                </svg>
+              </div>
             </div>
 
             <div className="flex-1 text-left">
@@ -295,7 +295,7 @@ export function TravelTab({ onOpenAirports, onFeedback }: TravelTabProps) {
               <p className="text-[11px] text-white/40 leading-snug">Concierge, Lounges & Priority Pickups at 430+ airports</p>
             </div>
 
-            <div 
+            <div
               className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white/5 border border-white/5 active:bg-white/10"
             >
               <svg className="w-4 h-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
