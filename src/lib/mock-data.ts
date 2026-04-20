@@ -3,6 +3,7 @@ export type BadgeType = "event" | "perk" | "project" | "hot" | "open" | "closing
 export interface Item {
   id: string;
   type: "event" | "project";
+  status?: "open" | "closed";
   title: string;
   description?: string;
   image?: string;
@@ -129,8 +130,9 @@ export const hotProjects: Item[] = [
       "/projects_gallery/olympus_apartment/Screenshot 2026-04-02 175832.png",
     ],
     isLocked: false,
+    status: "closed",
     badges: ["residential", "premium"],
-    raised: 9,
+    raised: 15,
     target: 15,
     irr: 21,
     minInvestment: 1000000,
@@ -199,8 +201,9 @@ export const hotProjects: Item[] = [
       "/projects_gallery/luxury_hotel/Screenshot 2026-04-02 140238.png",
     ],
     isLocked: false,
+    status: "closed",
     badges: ["commercial", "premium"],
-    raised: 14,
+    raised: 25,
     target: 25,
     irr: 22,
     minInvestment: 1500000,

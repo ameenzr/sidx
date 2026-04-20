@@ -26,7 +26,7 @@ export function ProjectsTab({ onOpenPortfolio, onFeedback }: Props) {
   const [activeFilter, setActiveFilter] = useState("All");
 
   const list =
-    activeFilter === "Open For Investment" ? exploreProjects.filter(p => !investedIds.has(p.id)) :
+    activeFilter === "Open For Investment" ? exploreProjects.filter(p => !investedIds.has(p.id) && p.status !== "closed") :
     exploreProjects;
 
   const openCount = exploreProjects.filter(p => !investedIds.has(p.id)).length;
@@ -125,6 +125,9 @@ export function ProjectsTab({ onOpenPortfolio, onFeedback }: Props) {
                                 }}
                               >New</span>
                             )}
+                            {item.status === "closed" && (
+                              <span className="text-[8px] font-black uppercase tracking-wider text-white bg-emerald-600/40 border border-emerald-500/50 px-1.5 py-0.5 rounded-sm shrink-0">Closed</span>
+                            )}
                             {isInvested && (
                               <span className="text-[8px] font-bold text-[var(--gold-text)] border border-[var(--gold)]/30 px-1.5 py-0.5 rounded-full shrink-0">Invested</span>
                             )}
@@ -145,7 +148,7 @@ export function ProjectsTab({ onOpenPortfolio, onFeedback }: Props) {
                           </p>
 
                           {/* Deadline */}
-                          {item.deadline && (
+                          {item.deadline && item.status !== "closed" && (
                             <p className="text-[9px] font-mono text-red-400/80 mt-1 flex items-center gap-1">
                               <span className="w-1 h-1 rounded-full bg-red-400 animate-pulse inline-block" />
                               Closes {item.deadline}
@@ -154,16 +157,32 @@ export function ProjectsTab({ onOpenPortfolio, onFeedback }: Props) {
 
                           {/* Progress bar */}
                           {item.raised !== undefined && item.target !== undefined && (
-                            <div className="mt-2.5 flex items-center gap-2">
-                              <div className="flex-1 h-[2px] bg-white/8 rounded-full overflow-hidden">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${fundedPct}%` }}
-                                  transition={{ duration: 1, ease: "easeOut", delay: idx * 0.07 + 0.1 }}
-                                  className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
-                                />
+                            <div className="mt-2.5 flex flex-col gap-1.5">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 h-[2px] bg-white/8 rounded-full overflow-hidden">
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${fundedPct}%` }}
+                                    transition={{ duration: 1, ease: "easeOut", delay: idx * 0.07 + 0.1 }}
+                                    className={`h-full rounded-full ${
+                                      item.status === "closed" 
+                                        ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" 
+                                        : "bg-gradient-to-r from-[var(--gold)] to-amber-400"
+                                    }`}
+                                  />
+                                </div>
+                                <span className={`text-[8px] font-mono shrink-0 ${item.status === 'closed' ? 'text-emerald-400 font-bold' : 'text-white/30'}`}>
+                                  {fundedPct}%
+                                </span>
                               </div>
-                              <span className="text-[8px] font-mono text-white/30 shrink-0">{fundedPct}%</span>
+                              {item.status === "closed" && (
+                                <p className="text-[9px] font-bold text-emerald-400/90 flex items-center gap-1">
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                  </svg>
+                                  100% Fund Collected
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>

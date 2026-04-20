@@ -282,11 +282,17 @@ export function DetailDrawer({ item, onClose, type, onFeedback }: DetailDrawerPr
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.22 }}
-                    className="mb-5 bg-white/[0.03] border border-white/6 rounded-2xl px-4 py-3.5"
+                    className={`mb-5 border rounded-2xl px-4 py-3.5 ${
+                      item.status === 'closed' 
+                        ? 'bg-emerald-500/5 border-emerald-500/20' 
+                        : 'bg-white/[0.03] border-white/6'
+                    }`}
                   >
                     <div className="flex justify-between items-baseline mb-2.5">
-                      <span className="text-[10px] font-mono text-white/35 uppercase tracking-wider">Funding Progress</span>
-                      <span className="text-[12px] font-bold text-[var(--gold-text)]/70">
+                      <span className={`text-[10px] font-mono uppercase tracking-wider ${item.status === 'closed' ? 'text-emerald-400' : 'text-white/35'}`}>
+                        {item.status === 'closed' ? 'Funding Complete' : 'Funding Progress'}
+                      </span>
+                      <span className={`text-[12px] font-bold ${item.status === 'closed' ? 'text-emerald-400' : 'text-[var(--gold-text)]/70'}`}>
                         {Math.round((item.raised / item.target) * 100)}% · ₹{item.target}Cr target
                       </span>
                     </div>
@@ -295,9 +301,23 @@ export function DetailDrawer({ item, onClose, type, onFeedback }: DetailDrawerPr
                         initial={{ width: 0 }}
                         animate={{ width: `${(item.raised / item.target) * 100}%` }}
                         transition={{ duration: 1.2, ease: "easeOut", delay: 0.35 }}
-                        className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
+                        className={`h-full rounded-full ${
+                          item.status === 'closed' 
+                            ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)]' 
+                            : 'bg-gradient-to-r from-[var(--gold)] to-amber-400'
+                        }`}
                       />
                     </div>
+                    {item.status === 'closed' && (
+                      <div className="mt-3 flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">100% Fund Collected</span>
+                      </div>
+                    )}
                   </motion.div>
                 )}
 
@@ -390,6 +410,18 @@ export function DetailDrawer({ item, onClose, type, onFeedback }: DetailDrawerPr
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.36 }}
                   onClick={() => {
+                    if (item.status === 'closed') {
+                      // Maybe open a PDF or show a message
+                      if (onFeedback) {
+                        onFeedback({
+                          title: "Investment Closed",
+                          message: "Funding for this project has been completed. You can view the project performance report in your portfolio if you are an investor.",
+                          type: "success",
+                        });
+                      }
+                      onClose();
+                      return;
+                    }
                     if (onFeedback) {
                       onFeedback({
                         title: type === "event" ? "Registration Received" : "Interest Registered",
@@ -403,9 +435,13 @@ export function DetailDrawer({ item, onClose, type, onFeedback }: DetailDrawerPr
                     }
                     onClose();
                   }}
-                  className="w-full py-4 bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black font-bold text-[14px] rounded-2xl tracking-wide shadow-[0_4px_24px_rgba(251,191,36,0.25)] active:scale-[0.98] transition-transform"
+                  className={`w-full py-4 font-bold text-[14px] rounded-2xl tracking-wide shadow-lg active:scale-[0.98] transition-all ${
+                    item.status === 'closed'
+                      ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
+                      : "bg-gradient-to-r from-[var(--gold)] to-amber-500 text-black shadow-[0_4px_24px_rgba(251,191,36,0.25)]"
+                  }`}
                 >
-                  {type === "event" ? "Register for this Event" : "Express Interest"}
+                  {item.status === "closed" ? "Investment Closed" : type === "event" ? "Register for this Event" : "Express Interest"}
                 </motion.button>
 
                 <p className="text-center text-[10px] font-mono text-white/12 mt-5 tracking-wider">

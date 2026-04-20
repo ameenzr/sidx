@@ -41,7 +41,7 @@ export default function Home() {
   const [drawerType, setDrawerType] = useState<"event" | "project">("project");
   const [airportsNav, setAirportsNav] = useState<{ airport?: string; service?: string } | null>(null);
   const [activeOpenProjectIndex, setActiveOpenProjectIndex] = useState(0);
-  const openProjectsList = exploreProjects.filter(p => !p.isLocked);
+  const openProjectsList = exploreProjects.filter(p => !p.isLocked && p.status !== "closed");
   const investedIds = new Set(portfolioInvestments.map(p => p.projectId));
 
   const openAirports = (airport?: string, service?: string) => {
