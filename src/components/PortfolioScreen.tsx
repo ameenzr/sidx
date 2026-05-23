@@ -239,8 +239,8 @@ export function PortfolioScreen({ onBack }: Props) {
                   <span className="text-[16px] font-bold text-[var(--gold-text)] tracking-widest">{userRewards.tier}</span>
                 </div>
                 <div className="flex flex-col text-right text-[9px] font-mono text-white/25 leading-tight gap-1 uppercase tracking-wider">
-                  <span>Member since Jan '25</span>
-                  <span>Valid till Dec '26</span>
+                  <span>Member since Jan &apos;25</span>
+                  <span>Valid till Dec &apos;26</span>
                 </div>
               </div>
             </div>

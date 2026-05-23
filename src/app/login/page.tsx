@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,7 +71,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
             <div className="relative">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -78,8 +80,16 @@ export default function LoginPage() {
                 placeholder="Enter access code"
                 aria-label="Access password"
                 autoFocus
-                className="w-full bg-[var(--c-elevated)] text-[var(--c-text-h)] placeholder-[var(--c-text-muted)] border border-[var(--c-border)] rounded-xl px-4 py-4 focus:outline-none focus:border-[var(--gold)]/50 focus:ring-1 focus:ring-[var(--gold)]/50 transition-all font-mono text-sm tracking-widest text-center"
+                className="w-full bg-[var(--c-elevated)] text-[var(--c-text-h)] placeholder-[var(--c-text-muted)] border border-[var(--c-border)] rounded-xl pl-4 pr-12 py-4 focus:outline-none focus:border-[var(--gold)]/50 focus:ring-1 focus:ring-[var(--gold)]/50 transition-all font-mono text-sm tracking-widest text-center"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--c-text-muted)] hover:text-[var(--c-text-h)] transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
               {error && (
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}

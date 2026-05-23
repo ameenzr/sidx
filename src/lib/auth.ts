@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 export const SESSION_COOKIE = 'sidx-session';
-export const SESSION_DURATION = 30 * 24 * 60 * 60; // 30 days in seconds
+export const SESSION_DURATION = 7 * 24 * 60 * 60; // 7 days in seconds
 
 function getSecret() {
   const secret = process.env.SESSION_SECRET;

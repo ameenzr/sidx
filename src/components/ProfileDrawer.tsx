@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { userPortfolio, userRewards } from "@/lib/mock-data";
+import { userRewards } from "@/lib/mock-data";
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -9,13 +9,16 @@ interface ProfileDrawerProps {
   onOpenPortfolio: () => void;
 }
 
-function fmt(n: number) {
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
-  return `₹${(n / 1000).toFixed(0)}K`;
-}
-
 export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawerProps) {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login';
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -155,18 +158,16 @@ export function ProfileDrawer({ isOpen, onClose, onOpenPortfolio }: ProfileDrawe
             </div>
 
             {/* ── Footer ── */}
-            <div className="shrink-0 px-5 pb-8 pt-4 flex items-center justify-end" style={{ background: `linear-gradient(to top, var(--c-surface) 60%, transparent)` }}>
-              <div className="flex items-center gap-3">
-                <button className="text-[10px] font-mono transition-colors" style={{ color: "var(--c-text-muted)" }}>
-                  Contact RM
-                </button>
-                <button className="flex items-center gap-1.5 text-[10px] font-mono transition-colors" style={{ color: "var(--c-text-muted)" }}>
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                  </svg>
-                  Sign out
-                </button>
-              </div>
+            <div className="shrink-0 px-5 pb-8 pt-4" style={{ background: "var(--c-surface)" }}>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border border-[var(--red-semantic)]/20 hover:border-[var(--red-semantic)]/35 bg-[var(--red-semantic)]/8 hover:bg-[var(--red-semantic)]/15 active:scale-[0.98] transition-all text-[var(--red-text)] text-[12px] font-mono tracking-wider uppercase font-bold cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+                Sign out
+              </button>
             </div>
           </motion.div>
         </>
