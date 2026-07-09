@@ -230,7 +230,7 @@ export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
           >
             <motion.img
               src="/sid-x_logo.png"
-              alt="SID-X"
+              alt="SIDX"
               animate={
                 phase === "burst" || phase === "reveal"
                   ? {
@@ -243,7 +243,7 @@ export function LaunchAnimation({ onComplete }: LaunchAnimationProps) {
                   : {}
               }
               transition={{ duration: 1.0, ease: "easeOut" }}
-              className="w-[160px] object-contain"
+              className="w-[240px] md:w-[280px] object-contain"
             />
 
             {/* ── Tagline reveal ── */}

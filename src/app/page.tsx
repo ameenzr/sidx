@@ -25,6 +25,7 @@ import { PortfolioScreen } from "@/components/PortfolioScreen";
 import { DetailDrawer } from "@/components/DetailDrawer";
 import { LaunchAnimation } from "@/components/LaunchAnimation";
 import { InboxScreen } from "@/components/InboxScreen";
+import { useTheme } from "@/components/ThemeProvider";
 
 function fmt(n: number) {
   if (n >= 10000000) return `₹${(n / 10000000).toFixed(1)}Cr`;
@@ -33,6 +34,7 @@ function fmt(n: number) {
 }
 
 export default function Home() {
+  const { theme } = useTheme();
   const [hasLaunched, setHasLaunched] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -144,7 +146,7 @@ export default function Home() {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 className="h-6 flex items-center"
               >
-                <img src="/sid-x_logo.png" alt="SID-X" className="h-full w-auto object-contain" />
+                <img src={theme === "light" ? "/sid-x_logo_light.png" : "/sid-x_logo.png"} alt="SIDX" className="h-full w-auto object-contain transition-all duration-300" />
               </motion.div>
             )}
           </div>

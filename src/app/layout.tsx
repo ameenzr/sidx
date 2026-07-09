@@ -22,8 +22,11 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SID-X exclusive community",
-  description: "Curated investment projects and exclusive events.",
+  title: "SIDX | Exclusive Community",
+  description: "Curated investment projects and exclusive privileges.",
+  icons: {
+    icon: "/sid-x_icon.png",
+  },
 };
 
 export default function RootLayout({

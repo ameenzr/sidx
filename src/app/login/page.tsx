@@ -51,19 +51,17 @@ export default function LoginPage() {
           transition={{ duration: 0.4 }}
           className="relative bg-[var(--c-card)] border border-[var(--c-border)] rounded-[24px] p-8 shadow-[0_8px_40px_rgba(0,0,0,0.5)] backdrop-blur-md overflow-hidden before:absolute before:inset-0 before:border before:border-[var(--gold)]/20 before:rounded-[24px] before:animate-gold-shine before:pointer-events-none"
         >
-          <div className="flex flex-col items-center mb-10">
-            <div className="w-16 h-16 mb-6 relative">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-52 h-14 mb-3 relative">
               <Image
                 src="/sid-x_logo.png"
-                alt="SID-X"
+                alt="SIDX"
                 fill
-                className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                priority
+                className="object-contain drop-shadow-[0_0_20px_rgba(200,125,42,0.2)]"
               />
             </div>
-            <h1 className="font-display text-2xl tracking-wide text-[var(--c-text-h)] mb-2">
-              SID-X
-            </h1>
-            <p className="font-mono text-xs tracking-[0.2em] text-[var(--gold-text)] uppercase font-medium">
+            <p className="font-mono text-xs tracking-[0.25em] text-[var(--gold-text)] uppercase font-semibold">
               Members Only
             </p>
           </div>
