@@ -3,8 +3,10 @@ import { DM_Sans, DM_Serif_Display, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
+// DM Sans is a variable font — passing a `weight` array is only valid for
+// non-variable Google fonts and breaks the Turbopack production build.
+// Omitting it loads the variable face, which covers every weight 100–900.
 const dmSans = DM_Sans({
-  weight: ["400", "500", "600", "700"],
   variable: "--font-dm-sans",
   subsets: ["latin"],
 });
